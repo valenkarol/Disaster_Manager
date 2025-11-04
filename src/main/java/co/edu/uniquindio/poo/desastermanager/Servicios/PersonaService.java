@@ -13,9 +13,14 @@ public class PersonaService {
     @Autowired
     private PersonaRepository personaRepository;
 
-    public static Persona guardarUsuario(String nombre, String apellido) {
+    public Persona guardarUsuario(String nombre, String apellido) {
         Persona persona = new Persona();
-        persona.se
+        persona.setNombrePersona(nombre);
+        persona.setApellidosPersona(apellido);
+        persona.setEdad(18); //TODO: Edad debe ser pedida
+
+
+        return personaRepository.save(persona);
 
     }
 }
