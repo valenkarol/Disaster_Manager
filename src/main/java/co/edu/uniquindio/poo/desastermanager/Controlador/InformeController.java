@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
-import co.edu.uniquindio.poo.desastermanager.Equipo;
-import co.edu.uniquindio.poo.desastermanager.Servicios.EquipoService;
+import co.edu.uniquindio.poo.desastermanager.Informe;
+import co.edu.uniquindio.poo.desastermanager.Servicios.InformeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,37 +11,36 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/equipos")
-public class EquipoController {
-
+@RequestMapping("/informes")
+public class InformeController {
     @Autowired
-    private EquipoService equipoService;
+    private InformeService informeService;
 
     // GET - listar todos CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Equipo>> listarEquipos() {
-        return new ResponseEntity<>(equipoService.listarEquipos(), HttpStatus.OK);
+    public ResponseEntity<List<Informe>> listarInformes() {
+        return new ResponseEntity<>(informeService.listarInformes(), HttpStatus.OK);
     }
 
-    // GET - obtener uno MIRAR SI IMPLEMENTAR MAPA PROPIO
+    // GET - uno por ID REALIZAR MAPA PROPIO TAL VEZ
     @GetMapping("/{id}")
-    public ResponseEntity<Equipo> obtenerEquipoPorId(@PathVariable String id) {
-        Optional<Equipo> equipo = equipoService.obtenerEquipoPorId(id);
-        return equipo.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+    public ResponseEntity<Informe> obtenerInformePorId(@PathVariable String id) {
+        Optional<Informe> informe = informeService.obtenerInformePorId(id);
+        return informe.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     @PostMapping
-    public ResponseEntity<Equipo> crearEquipo(@RequestBody Equipo equipo) {
+    public ResponseEntity<Informe> crearInforme() {
         try {
-            Equipo nuevo = equipoService.guardarEquipo(equipo);
+            Informe nuevo = informeService.crearInforme();
             return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Equipo> actualizarEquipo(@PathVariable String id, @RequestBody Equipo equipoActualizado) {
-        Equipo actualizado = equipoService.actualizarEquipo(id, equipoActualizado);
+    public ResponseEntity<Informe> actualizarInforme(@PathVariable String id, @RequestBody Informe informeActualizado) {
+        Informe actualizado = informeService.actualizarInforme(id, informeActualizado);
         if (actualizado != null) {
             return new ResponseEntity<>(actualizado, HttpStatus.OK);
         } else {
@@ -49,9 +48,9 @@ public class EquipoController {
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarEquipo(@PathVariable String id) {
+    public ResponseEntity<Void> eliminarInforme(@PathVariable String id) {
         try {
-            equipoService.eliminarEquipo(id);
+            informeService.eliminarInforme(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
