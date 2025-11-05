@@ -1,0 +1,63 @@
+package co.edu.uniquindio.poo.desastermanager.Controlador;
+
+import co.edu.uniquindio.poo.desastermanager.Recurso;
+import co.edu.uniquindio.poo.desastermanager.Servicios.RecursoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Repository
+@RequestMapping("/recurso")
+public class RecursoController {
+
+    @Autowired
+    private RecursoService recursoService;
+
+    // READ - obtener todos
+    @GetMapping
+    public ResponseEntity<List<Recurso>> listarRecursos() {
+        return new ResponseEntity<>(recursoService.listarRecursos(), HttpStatus.OK);
+    }
+
+    // READ - obtener uno por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Recurso> obtenerRecursoPorId(@PathVariable String id) {
+        Optional<Recurso> recurso = recursoService.obtenerRecursoPorId(id);
+        return recurso.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @PostMapping
+    public ResponseEntity<Recurso> crearRecurso(@RequestBody Recurso recurso) {
+        try {
+            Recurso nuevoRecurso = recursoService.guardarRecurso(recurso);
+            return new ResponseEntity<>(nuevoRecurso, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 🟠 UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<Recurso> actualizarRecurso(@PathVariable String id, @RequestBody Recurso recursoActualizado) {
+        Recurso actualizado = recursoService.actualizarRecurso(id, recursoActualizado);
+        if (actualizado != null) {
+            return new ResponseEntity<>(actualizado, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // 🔴 DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarRecurso(@PathVariable String id) {
+        try {
+            recursoService.eliminarRecurso(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
