@@ -1,25 +1,18 @@
 package co.edu.uniquindio.poo.desastermanager;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "ubicaciones")
 public class Ubicacion {
+    @Id
     private String coordenadas;
-    private TipoUbicacion tipoUbicacion; // CIUDAD, REFUGIO, CENTRO DE AYUDA
-
-    public Ubicacion(String coordenadas, TipoUbicacion tipoUbicacion) {
-        this.coordenadas = coordenadas;
-        this.tipoUbicacion = tipoUbicacion;
-    }
-
-    public String getCoordenadas() {
-        return coordenadas;
-    }
-
-    public TipoUbicacion getTipoUbicacion() {
-        return tipoUbicacion;
-    }
-
-    @Override
-    public String toString() {
-        return tipoUbicacion + " (" + coordenadas + ")";
-    }
+    private TipoUbicacion tipoUbicacion;
 }
 

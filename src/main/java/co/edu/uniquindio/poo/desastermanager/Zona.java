@@ -9,12 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "rutas")
-
-public class Ruta {
+@Document(collection = "zonas")
+public class Zona {
     @Id
-    private Ubicacion origen;
-    private Ubicacion destino;
-    private double distancia;
-    private String estadoRuta;
+    private String id;
+    private String nombreZona;
+    private int nivelRiesgo;
 }
