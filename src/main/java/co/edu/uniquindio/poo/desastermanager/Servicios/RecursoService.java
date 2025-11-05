@@ -15,6 +15,9 @@ public class RecursoService {
     public Recurso guardarRecurso(Recurso recurso) {
         return recursoRepository.save(recurso);
     }
+    public Optional<Recurso> obtenerRecursoPorId(String id) {
+        return recursoRepository.findById(id);
+    }
 
     // READ - todos
     public List<Recurso> listarRecursos() {

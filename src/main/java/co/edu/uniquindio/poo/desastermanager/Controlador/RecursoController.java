@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequestMapping("/recurso")
@@ -16,13 +18,13 @@ public class RecursoController {
     @Autowired
     private RecursoService recursoService;
 
-    // READ - obtener todos
+    // READ - obtener todos- CAMBIAR POR LISTA PROPIA
     @GetMapping
     public ResponseEntity<List<Recurso>> listarRecursos() {
         return new ResponseEntity<>(recursoService.listarRecursos(), HttpStatus.OK);
     }
 
-    // READ - obtener uno por ID
+    // READ - obtener uno por ID CAMBIAR POR MAP PROPIO
     @GetMapping("/{id}")
     public ResponseEntity<Recurso> obtenerRecursoPorId(@PathVariable String id) {
         Optional<Recurso> recurso = recursoService.obtenerRecursoPorId(id);
@@ -38,8 +40,6 @@ public class RecursoController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    // 🟠 UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<Recurso> actualizarRecurso(@PathVariable String id, @RequestBody Recurso recursoActualizado) {
         Recurso actualizado = recursoService.actualizarRecurso(id, recursoActualizado);
@@ -49,8 +49,6 @@ public class RecursoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    // 🔴 DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarRecurso(@PathVariable String id) {
         try {
