@@ -27,4 +27,19 @@ public class UbicacionService {
     public void eliminarUbicacion(String id) {
         ubicacionRepository.deleteById(id);
     }
+
+    public boolean verificarUbicacion(String id) {
+        return ubicacionRepository.existsById(id);
+    }
+
+    public Ubicacion actualizarUbicacion(String id, Ubicacion ubicacionActualizada) {
+        Ubicacion ubicacion = ubicacionRepository.findById(id).orElseThrow();
+        ubicacion.setTipoUbicacion(ubicacionActualizada.getTipoUbicacion());
+        ubicacion.setCoordenadas(ubicacionActualizada.getCoordenadas());
+        return ubicacionRepository.save(ubicacion);
+    }
+
+    public Ubicacion obtenerUbicacion(String id) {
+        return ubicacionRepository.findById(id).orElse(null);
+    }
 }

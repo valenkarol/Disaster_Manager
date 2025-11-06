@@ -42,4 +42,10 @@ public class InformeService {
     public void eliminarInforme(String id) {
         informeRepository.deleteById(id);
     }
+
+    public Informe realizarInforme() {
+        Informe informe = new Informe();
+        informe.setFecha(LocalDateTime.now());
+        return informeRepository.save(informe);
+    }
 }
