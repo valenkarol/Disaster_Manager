@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/evacuaciones")
-@CrossOrigin
 public class EvacuacionController {
 
     @Autowired
