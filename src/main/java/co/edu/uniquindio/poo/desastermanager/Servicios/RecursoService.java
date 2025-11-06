@@ -37,4 +37,18 @@ public class RecursoService {
     public void eliminarRecurso(String id) {
         recursoRepository.deleteById(id);
     }
+
+    public boolean disponibilidadRecursos(String tipo) {
+        return recursoRepository.findAll().stream()
+                .anyMatch(r -> r.getTipo().name().equalsIgnoreCase(tipo));
+    }
+
+    public void distribuirRecursos(Recurso recurso, int cantidad) {
+        if (recurso.getCantidad() >= cantidad) {
+            recurso.setCantidad(recurso.getCantidad() - cantidad);
+            recursoRepository.save(recurso);
+        } else {
+            System.out.println("No hay suficientes recursos del tipo " + recurso.getTipo());
+        }
+    }
 }
