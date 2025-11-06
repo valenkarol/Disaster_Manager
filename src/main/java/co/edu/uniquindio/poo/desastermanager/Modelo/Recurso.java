@@ -1,8 +1,7 @@
-package co.edu.uniquindio.poo.desastermanager;
+package co.edu.uniquindio.poo.desastermanager.Modelo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 
-import co.edu.uniquindio.poo.desastermanager.Persona;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Persona;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.PersonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

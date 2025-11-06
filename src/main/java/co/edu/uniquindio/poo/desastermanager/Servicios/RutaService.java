@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Ruta;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.RutaRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Administrador;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Administrador;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.AdministradorRepository;
 import org.springframework.stereotype.Service;
 //importar lista propia

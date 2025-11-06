@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
-import co.edu.uniquindio.poo.desastermanager.Afectado;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
 import co.edu.uniquindio.poo.desastermanager.Servicios.AfectadoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

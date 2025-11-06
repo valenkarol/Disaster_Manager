@@ -1,4 +1,5 @@
-package co.edu.uniquindio.poo.desastermanager;
+package co.edu.uniquindio.poo.desastermanager.Modelo;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,12 +10,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "evacuaciones")
-public class Evacuacion {
+@Document(collection = "personas")
 
+public class Persona {
     @Id
-    private String id;
-    private int numeroAfectados;
-    private int prioridad;
+    private String idPersona;
+    private String nombrePersona;
+    private String apellidosPersona;
+    private int edad;
 
 }
+

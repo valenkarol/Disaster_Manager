@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 
-import co.edu.uniquindio.poo.desastermanager.Persona;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Persona;
 import co.edu.uniquindio.poo.desastermanager.Servicios.PersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

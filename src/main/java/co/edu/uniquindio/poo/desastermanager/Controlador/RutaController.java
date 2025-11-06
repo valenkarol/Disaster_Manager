@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
-import co.edu.uniquindio.poo.desastermanager.Ruta;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Servicios.RutaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

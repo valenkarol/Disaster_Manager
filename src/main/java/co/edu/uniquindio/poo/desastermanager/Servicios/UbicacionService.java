@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Ubicacion;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.UbicacionRepository;
 import org.springframework.stereotype.Service;
 //importar lista pripia

@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Repositorio;
 
 
-import co.edu.uniquindio.poo.desastermanager.Ubicacion;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

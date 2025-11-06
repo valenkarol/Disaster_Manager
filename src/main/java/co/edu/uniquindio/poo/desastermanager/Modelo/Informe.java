@@ -1,4 +1,4 @@
-package co.edu.uniquindio.poo.desastermanager;
+package co.edu.uniquindio.poo.desastermanager.Modelo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.OperadorEmergencia;
+import co.edu.uniquindio.poo.desastermanager.Modelo.OperadorEmergencia;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.OperadorEmergenciaRepository;
 import org.springframework.stereotype.Service;
 //importar lista propia

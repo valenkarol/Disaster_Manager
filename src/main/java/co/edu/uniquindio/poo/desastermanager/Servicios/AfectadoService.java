@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Afectado;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.AfectadoRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;

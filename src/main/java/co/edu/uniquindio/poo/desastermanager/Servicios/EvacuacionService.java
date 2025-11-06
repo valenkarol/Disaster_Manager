@@ -1,6 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Evacuacion;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.EvacuacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
