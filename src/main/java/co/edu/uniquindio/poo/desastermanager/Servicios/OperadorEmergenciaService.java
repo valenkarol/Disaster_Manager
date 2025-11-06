@@ -2,13 +2,14 @@ package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.OperadorEmergencia;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.OperadorEmergenciaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 //importar lista propia
 import java.util.List;
 
 @Service
 public class OperadorEmergenciaService {
-
+    @Autowired
     private final OperadorEmergenciaRepository operadorRepository;
 
     public OperadorEmergenciaService(OperadorEmergenciaRepository operadorRepository) {

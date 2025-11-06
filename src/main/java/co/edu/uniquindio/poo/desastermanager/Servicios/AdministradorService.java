@@ -2,6 +2,7 @@ package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Administrador;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.AdministradorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 //importar lista propia
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Service
 public class AdministradorService {
 
+    @Autowired
     private final AdministradorRepository administradorRepository;
 
     public AdministradorService(AdministradorRepository administradorRepository) {
