@@ -56,4 +56,14 @@ public class InformeController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/generar")
+    public ResponseEntity<Informe> generarInforme() {
+        try {
+            Informe informe = informeService.realizarInforme();
+            return new ResponseEntity<>(informe, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
