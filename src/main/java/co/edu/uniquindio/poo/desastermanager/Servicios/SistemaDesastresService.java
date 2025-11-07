@@ -10,9 +10,7 @@ public class SistemaDesastresService {
     @Autowired
     private RecursoService recursoService;
     @Autowired
-    private UbicacionService ubicacionService;
-    @Autowired
-    private InformeService informeService;
+    private RutaService rutaService;
     @Autowired
     private EvacuacionService evacuacionService;
     @Autowired
@@ -20,11 +18,19 @@ public class SistemaDesastresService {
 
     //Metodos con mas de una clases
 
-    //ORGANIZAR METODO
+
     public Ruta definirRuta(Ubicacion origen, Ubicacion destino) {
-        System.out.println("Definiendo ruta entre " + origen + " y " + destino);
-        return new Ruta(origen, destino);
+        double distancia = calcularDistancia(origen, destino);
+
+        Ruta ruta = new Ruta();
+        ruta.setOrigen(origen);
+        ruta.setDestino(destino);
+        ruta.setDistancia(distancia);
+        ruta.setEstadoRuta("Activa");
+
+        return rutaService.crearRuta(ruta);
     }
+
 
     public void gestionEvacuacion(String idDesastre, Evacuacion evacuacion) {
         Desastre desastre = desastreService.obtenerDesastrePorId(idDesastre).orElse(null);
