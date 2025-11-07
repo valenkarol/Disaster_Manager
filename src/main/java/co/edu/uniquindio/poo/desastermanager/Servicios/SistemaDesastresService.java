@@ -20,7 +20,7 @@ public class SistemaDesastresService {
 
 
     public Ruta definirRuta(Ubicacion origen, Ubicacion destino) {
-        double distancia = rutaMasCorta(origen, destino);
+        double distancia = rutaService.rutaMasCorta(origen, destino);
 
         Ruta ruta = new Ruta();
         ruta.setOrigen(origen);
