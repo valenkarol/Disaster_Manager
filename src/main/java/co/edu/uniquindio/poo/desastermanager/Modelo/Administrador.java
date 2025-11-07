@@ -12,9 +12,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true) //que es esto
 @Document(collection = "administradores")
-public class Administrador extends Persona {
+public class Administrador extends Persona implements Comparable<Administrador> {
     @Id
     private String idAdministrador;
+
+    @Override
+    public int compareTo(Administrador otro) {
+        if (otro == null) return 1;
+
+        // Compara por nombre, y si son iguales, por ID
+        int comparacion = this.getNombrePersona().compareToIgnoreCase(otro.getNombrePersona());
+        if (comparacion == 0) {
+            // Si los nombres son iguales, compara por ID
+            return this.idAdministrador.compareToIgnoreCase(otro.idAdministrador);
+        }
+        return comparacion;
+    }
 
     public String generarInforme() {
         return "Informe generado por el administrador " + getNombrePersona() + " " + getApellidosPersona();

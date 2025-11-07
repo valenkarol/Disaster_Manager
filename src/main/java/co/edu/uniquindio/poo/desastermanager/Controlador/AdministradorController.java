@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Administrador;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Servicios.AdministradorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class AdministradorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Administrador>> listarAdministradores() {
+    public ResponseEntity<ListaSimpleEnlazada<Administrador>> listarAdministradores() {
         return new ResponseEntity<>(administradorService.listarAdministradores(), HttpStatus.OK);
     }
 
