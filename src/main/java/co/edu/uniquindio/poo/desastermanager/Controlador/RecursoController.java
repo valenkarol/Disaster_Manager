@@ -58,4 +58,10 @@ public class RecursoController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/disponibilidad")
+    public ResponseEntity<Boolean> verificarDisponibilidad(@RequestParam String tipo) {
+        boolean disponible = recursoService.disponibilidadRecursos(tipo);
+        return new ResponseEntity<>(disponible, HttpStatus.OK);
+    }
 }
