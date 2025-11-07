@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Servicios.AfectadoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,9 @@ public class AfectadoController {
 
     // Listar todos los afectados
     @GetMapping
-    public ResponseEntity<List<Afectado>> listarAfectados() {
+    public ResponseEntity<ListaSimpleEnlazada<Afectado>> listarAfectados() {
         try {
-            List<Afectado> lista = afectadoService.listarAfectados();
+            ListaSimpleEnlazada<Afectado> lista = afectadoService.listarAfectados();
             return new ResponseEntity<>(lista, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
