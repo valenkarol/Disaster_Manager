@@ -1,11 +1,13 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Desastre;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.DesastreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import java.util.Optional;
 
 @Service
@@ -16,9 +18,19 @@ public class DesastreService {
         return desastreRepository.save(desastre);
     }
 
-    // READ - todos CAMPIAR A LISTA PROPIA
-    public List<Desastre> listarDesastres() {
-        return desastreRepository.findAll();
+    public ListaSimpleEnlazada<Desastre> listarDesastres() {
+        ListaSimpleEnlazada<Desastre> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<Desastre> listaMongo = desastreRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Desastre desastre : listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(desastre));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
 
     // READ - por ID

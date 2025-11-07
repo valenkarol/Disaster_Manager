@@ -14,12 +14,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "desastres")
-public class Desastre {
+public class Desastre implements Comparable<Desastre> {
 
     @Id
     private String id;
     private LocalDateTime fecha;
     private Ubicacion ubicacion;
+
+    @Override
+    public int compareTo(Desastre otro) {
+        if (otro == null) return 1;
+
+        int comparacion = this.getUbicacion().getCoordenadas()
+                .compareToIgnoreCase(otro.getUbicacion().getCoordenadas());
+
+        if (comparacion == 0) {
+            comparacion = this.id.compareToIgnoreCase(otro.id);
+        }
+
+        return comparacion;
+    }
+
 
     // Constructor explícito preguntar si es necesario - chat dice que en algunos casos si como en este caso
     public Desastre(LocalDateTime fecha, Ubicacion ubicacion) {

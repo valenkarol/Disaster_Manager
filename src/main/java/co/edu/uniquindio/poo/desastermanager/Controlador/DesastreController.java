@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Desastre;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Servicios.DesastreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class DesastreController {
 
     // READ - todos LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Desastre>> listarDesastres() {
+    public ResponseEntity<ListaSimpleEnlazada<Desastre>> listarDesastres() {
         return new ResponseEntity<>(desastreService.listarDesastres(), HttpStatus.OK);
     }
 
