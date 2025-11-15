@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.MapaSimple;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Recurso;
@@ -36,6 +37,20 @@ public class RecursoService {
 
         // 3. Retornamos nuestra estructura
         return listaPropia;
+    }
+
+    public MapaSimple<String, Recurso> obtenerMapaRecursos() {
+
+        MapaSimple<String, Recurso> mapa = new MapaSimple<>(50);
+
+        List<Recurso> listaMongo = recursoRepository.findAll();
+
+        for (Recurso r : listaMongo) {
+            if (r.getId() != null) {
+                mapa.put(r.getId(), r);
+            }
+        }
+        return mapa;
     }
 
     public Recurso actualizarRecurso(String id, Recurso recursoActualizado) {

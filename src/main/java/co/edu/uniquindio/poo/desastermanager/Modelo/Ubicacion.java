@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "ubicaciones")
 public class Ubicacion implements Comparable<Ubicacion>{
     @Id
+    private String id;
     private String coordenadas;
     private TipoUbicacion tipoUbicacion;
 
