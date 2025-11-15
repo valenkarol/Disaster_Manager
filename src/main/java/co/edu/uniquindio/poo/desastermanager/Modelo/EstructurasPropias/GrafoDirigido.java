@@ -28,8 +28,8 @@ public class GrafoDirigido {
         lista.agregarUltimo(new NodoLS<>(new Arista(destino.getId(), peso)));
     }
 
-    public ListaSimpleEnlazada<Arista> obtenerAdyacentes(Ubicacion u) {
-        return adyacencias.get(u.getId());
+    public ListaSimpleEnlazada<Arista> obtenerAdyacentes(String idOrigen) {
+        return adyacencias.get(idOrigen);
     }
 }
 
