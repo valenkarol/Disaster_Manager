@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
 import co.edu.uniquindio.poo.desastermanager.Servicios.EvacuacionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class EvacuacionController {
 
     // GET - listar todos   CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Evacuacion>> listarEvacuaciones() {
+    public ResponseEntity<ListaSimpleEnlazada<Evacuacion>> listarEvacuaciones() {
         return new ResponseEntity<>(evacuacionService.listarEvacuaciones(), HttpStatus.OK);
     }
 
