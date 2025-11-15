@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Servicios.InformeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class InformeController {
 
     // GET - listar todos CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Informe>> listarInformes() {
+    public ResponseEntity<ListaSimpleEnlazada<Informe>> listarInformes() {
         return new ResponseEntity<>(informeService.listarInformes(), HttpStatus.OK);
     }
 

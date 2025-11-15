@@ -20,7 +20,7 @@ public class EvacuacionService {
         return evacuacionRepository.save(evacuacion);
     }
 
-    // READ - todos CAMBIAR A LISTA PROPIA
+    // READ - todos
     public ListaSimpleEnlazada<Evacuacion> listarEvacuaciones() {
         ListaSimpleEnlazada<Evacuacion> listaPropia = new ListaSimpleEnlazada<>();
 

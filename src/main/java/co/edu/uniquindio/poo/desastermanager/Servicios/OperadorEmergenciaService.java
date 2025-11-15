@@ -1,5 +1,8 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Modelo.OperadorEmergencia;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.OperadorEmergenciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,19 @@ public class OperadorEmergenciaService {
         return operadorRepository.save(operador);
     }
 
-    public List<OperadorEmergencia> listarOperadores() {
-        return operadorRepository.findAll();
+    public ListaSimpleEnlazada<OperadorEmergencia> listarOperadores() {
+        ListaSimpleEnlazada<OperadorEmergencia> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<OperadorEmergencia> listaMongo = operadorRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (OperadorEmergencia operadorEmergencia: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(operadorEmergencia));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
 
     public void eliminarOperador(String id) {

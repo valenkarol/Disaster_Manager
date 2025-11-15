@@ -12,10 +12,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)//que es
 @Document(collection = "operadoresEmergencia")
-public class OperadorEmergencia extends Persona {
+public class OperadorEmergencia extends Persona implements Comparable<OperadorEmergencia> {
 
     @Id
     private String idOperador;
+
+    @Override
+    public int compareTo(OperadorEmergencia otro) {
+        if (otro == null) return 1;
+
+        return this.idOperador.compareTo(otro.idOperador);
+    }
+
 
     public void monitorearZona(Zona zona) {
         System.out.println("Monitoreando zona: " + zona.getNombreZona() + " (riesgo " + zona.getNivelRiesgo() + ")");
