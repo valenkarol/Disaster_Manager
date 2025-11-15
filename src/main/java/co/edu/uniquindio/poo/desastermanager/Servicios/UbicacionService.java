@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.MapaSimple;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
@@ -37,6 +38,18 @@ public class UbicacionService {
         // 3. Retornamos nuestra estructura
         return listaPropia;
     }
+// mapa propio
+    public MapaSimple<String, Ubicacion> obtenerMapaUbicaciones() {
+
+        MapaSimple<String, Ubicacion> mapa = new MapaSimple<>(50);
+        List<Ubicacion> lista = ubicacionRepository.findAll();
+
+        for (Ubicacion u : lista)
+            mapa.put(u.getId(), u);
+
+        return mapa;
+    }
+
 
     public void eliminarUbicacion(String id) {
         ubicacionRepository.deleteById(id);

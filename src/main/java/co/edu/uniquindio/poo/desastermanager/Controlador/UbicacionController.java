@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.MapaSimple;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,12 @@ public class UbicacionController {
     public ResponseEntity<ListaSimpleEnlazada<Ubicacion>> listarUbicaciones() {
         return new ResponseEntity<>(ubicacionService.listarUbicaciones(), HttpStatus.OK);
     }
+
+    @GetMapping("/mapa")
+    public ResponseEntity<MapaSimple<String, Ubicacion>> obtenerMapaUbicaciones() {
+        return new ResponseEntity<>(ubicacionService.obtenerMapaUbicaciones(), HttpStatus.OK);
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarUbicacion(@PathVariable String id) {
