@@ -1,5 +1,8 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Recurso;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.RecursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +23,21 @@ public class RecursoService {
     }
 
     // READ - todos
-    public List<Recurso> listarRecursos() {
-        return recursoRepository.findAll();
+    public ListaSimpleEnlazada<Recurso> listarRecursos() {
+        ListaSimpleEnlazada<Recurso> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<Recurso> listaMongo = recursoRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Recurso recurso: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(recurso));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
+
     public Recurso actualizarRecurso(String id, Recurso recursoActualizado) {
         Optional<Recurso> recursoOptional = recursoRepository.findById(id);
         if (recursoOptional.isPresent()) {

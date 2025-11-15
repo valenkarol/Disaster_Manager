@@ -6,16 +6,33 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "informes")
-public class Informe {
+public class Informe implements Comparable<Informe>{
     @Id
     private String id;
     private LocalDateTime fecha;
+
+    @Override
+    public int compareTo(Informe otro) {
+        if (otro == null) return 1;
+
+        // 1. Comparar por fecha (más recientes primero)
+        int comparacion = otro.fecha.compareTo(this.fecha);
+
+        // 2. Si las fechas son iguales, comparar por id
+        if (comparacion == 0) {
+            comparacion = this.id.compareTo(otro.id);
+        }
+
+        return comparacion;
+    }
+
 
     // Métodos lógicos ¿ESTOS VAN?
     public void crear() {

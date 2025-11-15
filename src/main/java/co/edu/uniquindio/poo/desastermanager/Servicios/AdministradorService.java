@@ -21,7 +21,7 @@ public class AdministradorService {
     public Administrador crearAdministrador(Administrador administrador) {
         return administradorRepository.save(administrador);
     }
-//????
+
     public ListaSimpleEnlazada<Administrador> listarAdministradores() {
         ListaSimpleEnlazada<Administrador> listaPropia = new ListaSimpleEnlazada<>();
 

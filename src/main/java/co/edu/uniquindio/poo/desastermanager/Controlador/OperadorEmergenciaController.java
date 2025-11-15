@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.OperadorEmergencia;
 import co.edu.uniquindio.poo.desastermanager.Servicios.OperadorEmergenciaService;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class OperadorEmergenciaController {
     @GetMapping
     public ResponseEntity<List<OperadorEmergencia>> listarOperadores() {
         try {
-            List<OperadorEmergencia> lista = operadorService.listarOperadores();
+            ListaSimpleEnlazada<OperadorEmergencia> lista = operadorService.listarOperadores();
             return new ResponseEntity<>(lista, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,6 +1,9 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Equipo;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.EquipoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +22,19 @@ public class EquipoService {
     }
 
     // READ - todos CAMBIAR POR LISTA PROPIA
-    public List<Equipo> listarEquipos() {
-        return equipoRepository.findAll();
+    public ListaSimpleEnlazada<Equipo> listarEquipos() {
+        ListaSimpleEnlazada<Equipo> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<Equipo> listaMongo = equipoRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Equipo equipo: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(equipo));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
 
     // READ - por ID

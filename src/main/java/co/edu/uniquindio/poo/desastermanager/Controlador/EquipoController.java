@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Equipo;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Servicios.EquipoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class EquipoController {
 
     // GET - listar todos CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Equipo>> listarEquipos() {
+    public ResponseEntity<ListaSimpleEnlazada<Equipo>> listarEquipos() {
         return new ResponseEntity<>(equipoService.listarEquipos(), HttpStatus.OK);
     }
 

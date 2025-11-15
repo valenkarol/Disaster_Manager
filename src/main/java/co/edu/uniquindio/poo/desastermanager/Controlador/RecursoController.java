@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Recurso;
 import co.edu.uniquindio.poo.desastermanager.Servicios.RecursoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class RecursoController {
 
     // READ - obtener todos- CAMBIAR POR LISTA PROPIA
     @GetMapping
-    public ResponseEntity<List<Recurso>> listarRecursos() {
+    public ResponseEntity<ListaSimpleEnlazada<Recurso>> listarRecursos() {
         return new ResponseEntity<>(recursoService.listarRecursos(), HttpStatus.OK);
     }
 

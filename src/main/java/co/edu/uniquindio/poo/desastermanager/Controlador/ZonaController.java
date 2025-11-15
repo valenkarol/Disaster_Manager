@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Zona;
 import co.edu.uniquindio.poo.desastermanager.Servicios.ZonaService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class ZonaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Zona>> listarZonas() {
+    public ResponseEntity<ListaSimpleEnlazada<Zona>> listarZonas() {
         return new ResponseEntity<>(zonaService.listarZonas(), HttpStatus.OK);
     }
 

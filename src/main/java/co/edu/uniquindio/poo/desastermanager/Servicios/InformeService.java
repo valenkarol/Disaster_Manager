@@ -1,5 +1,8 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.InformeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,19 @@ public class InformeService {
     }
 
     // READ - todos LISTA PROPIA
-    public List<Informe> listarInformes() {
-        return informeRepository.findAll();
+    public ListaSimpleEnlazada<Informe> listarInformes() {
+        ListaSimpleEnlazada<Informe> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<Informe> listaMongo = informeRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Informe informe: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(informe));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
 
     // READ - por ID

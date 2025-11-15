@@ -1,5 +1,8 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Recurso;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.RutaRepository;
@@ -22,10 +25,20 @@ public class RutaService {
         return rutaRepository.save(ruta);
     }
 
-    public List<Ruta> listarRutas() {
-        return rutaRepository.findAll();
-    }
+    public ListaSimpleEnlazada<Ruta> listarRutas() {
+        ListaSimpleEnlazada<Ruta> listaPropia = new ListaSimpleEnlazada<>();
 
+        // 1. Mongo devuelve una List normal
+        java.util.List<Ruta> listaMongo = rutaRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Ruta ruta: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(ruta));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
+    }
     public void eliminarRuta(String id) {
         rutaRepository.deleteById(id);
     }
