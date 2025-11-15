@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Equipo;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ColaPrioridad;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
@@ -16,8 +17,23 @@ public class EvacuacionService {
     @Autowired
     private EvacuacionRepository evacuacionRepository;
 
-    public Evacuacion crearEvacuacion(Evacuacion evacuacion) {
-        return evacuacionRepository.save(evacuacion);
+    private ColaPrioridad<Evacuacion> colaPrioridad = new ColaPrioridad<>();
+
+    public Evacuacion crearEvacuacion(Evacuacion nuevaEvacuacion) {
+        Evacuacion ev = evacuacionRepository.save(nuevaEvacuacion);
+
+        // Insertar en la cola de prioridad PROPIA
+        colaPrioridad.insertar(ev);
+
+        return ev;
+    }
+
+    public Evacuacion procesarEvacuacion() {
+        return colaPrioridad.extraer(); // Saca la más prioritaria
+    }
+
+    public Evacuacion verEvacuacionPrioritaria() {
+        return colaPrioridad.primero();
     }
 
     // READ - todos

@@ -191,4 +191,8 @@ public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>
         };
     }
 
+    public int tamaño() {
+        return tamaño;
+    }
+
 }
