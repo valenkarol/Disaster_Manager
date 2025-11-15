@@ -19,6 +19,18 @@ public class ZonaService {
         this.zonaRepository = zonaRepository;
     }
 
+    public Zona buscarZonaPorId(String id) {
+        ListaSimpleEnlazada<Zona> lista = listarZonas();
+
+        for (Zona zona : lista) {
+            if (zona.getId().equals(id)) {
+                return zona;
+            }
+        }
+        return null;
+    }
+
+
     public Zona crearZona(Zona zona) {
         return zonaRepository.save(zona);
     }

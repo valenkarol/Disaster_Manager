@@ -16,6 +16,12 @@ public class RecursoService {
 
     @Autowired
     private RecursoRepository recursoRepository;
+    @Autowired
+    public RecursoService(RecursoRepository recursoRepository) {
+        this.recursoRepository = recursoRepository;
+    }
+
+
     public Recurso guardarRecurso(Recurso recurso) {
         return recursoRepository.save(recurso);
     }
