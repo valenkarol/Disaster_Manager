@@ -1,5 +1,8 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.UbicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,19 @@ public class UbicacionService {
         return ubicacionRepository.save(ubicacion);
     }
 
-    public List<Ubicacion> listarUbicaciones() {
-        return ubicacionRepository.findAll();
+    public ListaSimpleEnlazada<Ubicacion> listarUbicaciones() {
+        ListaSimpleEnlazada<Ubicacion> listaPropia = new ListaSimpleEnlazada<>();
+
+        // 1. Mongo devuelve una List normal
+        java.util.List<Ubicacion> listaMongo = ubicacionRepository.findAll();
+
+        // 2. Convertimos a nuestra lista
+        for (Ubicacion ubicacion: listaMongo) {
+            listaPropia.agregarUltimo(new NodoLS<>(ubicacion));
+        }
+
+        // 3. Retornamos nuestra estructura
+        return listaPropia;
     }
 
     public void eliminarUbicacion(String id) {

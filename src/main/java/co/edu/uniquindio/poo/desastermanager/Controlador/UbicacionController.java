@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Servicios.UbicacionService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class UbicacionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ubicacion>> listarUbicaciones() {
+    public ResponseEntity<ListaSimpleEnlazada<Ubicacion>> listarUbicaciones() {
         return new ResponseEntity<>(ubicacionService.listarUbicaciones(), HttpStatus.OK);
     }
 

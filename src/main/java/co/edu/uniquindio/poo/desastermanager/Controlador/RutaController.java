@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Servicios.RutaService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class RutaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ruta>> listarRutas() {
+    public ResponseEntity<ListaSimpleEnlazada<Ruta>> listarRutas() {
         return new ResponseEntity<>(rutaService.listarRutas(), HttpStatus.OK);
     }
 
