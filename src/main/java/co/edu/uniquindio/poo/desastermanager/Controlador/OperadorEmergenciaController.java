@@ -32,7 +32,7 @@ public class OperadorEmergenciaController {
 
     // Listar todos los operadores
     @GetMapping
-    public ResponseEntity<List<OperadorEmergencia>> listarOperadores() {
+    public ResponseEntity<ListaSimpleEnlazada<OperadorEmergencia>> listarOperadores() {
         try {
             ListaSimpleEnlazada<OperadorEmergencia> lista = operadorService.listarOperadores();
             return new ResponseEntity<>(lista, HttpStatus.OK);
@@ -40,6 +40,7 @@ public class OperadorEmergenciaController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     // Eliminar un operador por id
     @DeleteMapping("/{id}")

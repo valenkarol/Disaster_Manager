@@ -6,8 +6,7 @@ import co.edu.uniquindio.poo.desastermanager.Servicios.RutaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//cambiar por lista propia
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/rutas")

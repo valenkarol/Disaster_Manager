@@ -3,6 +3,7 @@ package co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>{
     private NodoLS<T> primero;
@@ -170,6 +171,24 @@ public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>
     }
     @Override
     public Iterator<T> iterator() {
-        return new ListaIterator<>(primero);
+        return new Iterator<T>() {
+            private NodoLS<T> actual = primero;
+
+            @Override
+            public boolean hasNext() {
+                return actual != null;
+            }
+
+            @Override
+            public T next() {
+                if (actual == null) {
+                    throw new NoSuchElementException();
+                }
+                T dato = actual.getDato();
+                actual = actual.getProximo();
+                return dato;
+            }
+        };
     }
+
 }
