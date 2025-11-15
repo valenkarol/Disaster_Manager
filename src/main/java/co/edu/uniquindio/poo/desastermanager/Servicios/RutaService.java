@@ -1,11 +1,10 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 
-import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
-import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
-import co.edu.uniquindio.poo.desastermanager.Modelo.Recurso;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.*;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.RutaRepository;
+import co.edu.uniquindio.poo.desastermanager.Repositorio.UbicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,9 @@ import java.util.*;
 public class RutaService {
     @Autowired
     private final RutaRepository rutaRepository;
+
+    @Autowired // para el metodo construir grafo
+    private UbicacionRepository ubicacionRepository;
 
     public RutaService(RutaRepository rutaRepository) {
         this.rutaRepository = rutaRepository;
@@ -39,55 +41,117 @@ public class RutaService {
         // 3. Retornamos nuestra estructura
         return listaPropia;
     }
+    private GrafoDirigido construirGrafo() {
+
+        GrafoDirigido grafo = new GrafoDirigido(50);
+
+        // 1. Obtener todas las ubicaciones desde Mongo
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+
+        // Agregar nodos al grafo
+        for (Ubicacion u : ubicaciones) {
+            grafo.agregarNodo(u);
+        }
+
+        // 2. Obtener las rutas desde Mongo
+        List<Ruta> rutas = rutaRepository.findAll();
+
+        for (Ruta r : rutas) {
+            grafo.agregarArista(
+                    r.getOrigen(),
+                    r.getDestino(),
+                    r.getDistancia()
+            );
+        }
+
+        return grafo;
+    }
+
+    public MapaSimple<String, ListaSimpleEnlazada<Arista>> obtenerMapaGrafo() {
+
+        MapaSimple<String, ListaSimpleEnlazada<Arista>> grafo = new MapaSimple<>(50);
+
+        List<Ruta> rutas = rutaRepository.findAll();
+
+        for (Ruta r : rutas) {
+
+            String origen = r.getOrigen().getId();
+            String destino = r.getDestino().getId();
+
+            Arista arista = new Arista(destino, r.getDistancia());
+
+            if (!grafo.containsKey(origen)) {
+                grafo.put(origen, new ListaSimpleEnlazada<>());
+            }
+
+            grafo.get(origen).agregarUltimo(new NodoLS<>(arista));
+        }
+
+        return grafo;
+    }
+
     public void eliminarRuta(String id) {
         rutaRepository.deleteById(id);
     }
 
 
     //SUPUESTAMENTE DIJKSTRA - NO LO SEEE
-    // MAP, HASHMAP, ARRAYLIST, SET, HASHSET, KEYSET PROPIOS
 
     public double rutaMasCorta(Ubicacion origen, Ubicacion destino) {
-        List<Ruta> todasLasRutas = rutaRepository.findAll();
 
-        // Construimos el grafo MAP Y HASHMAP Y ARRAYLIST PROPIOS
-        Map<Ubicacion, List<Ruta>> grafo = new HashMap<>();
-        for (Ruta ruta : todasLasRutas) {
-            grafo.computeIfAbsent(ruta.getOrigen(), k -> new ArrayList<>()).add(ruta);
+        GrafoDirigido grafo = construirGrafo();
+
+        List<Ubicacion> ubicaciones = ubicacionRepository.findAll();
+
+        MapaSimple<String, Double> dist = new MapaSimple<>(100);
+        MapaSimple<String, Boolean> visitado = new MapaSimple<>(100);
+
+        // Inicializar
+        for (Ubicacion u : ubicaciones) {
+            dist.put(u.getId(), Double.MAX_VALUE);
+            visitado.put(u.getId(), false);
         }
 
-        // Inicializamos distancias y conjunto visitado
-        Map<Ubicacion, Double> distancias = new HashMap<>();
-        Set<Ubicacion> visitados = new HashSet<>();
+        dist.put(origen.getId(), 0.0);
 
-        for (Ubicacion u : grafo.keySet()) {
-            distancias.put(u, Double.MAX_VALUE);
-        }
-        distancias.put(origen, 0.0);
+        while (true) {
 
-        while (visitados.size() < grafo.size()) {
-            // Nodo con menor distancia no visitado
-            Ubicacion actual = distancias.entrySet().stream()
-                    .filter(e -> !visitados.contains(e.getKey()))
-                    .min(Map.Entry.comparingByValue())
-                    .map(Map.Entry::getKey)
-                    .orElse(null);
+            String actualId = null;
+            double min = Double.MAX_VALUE;
 
-            if (actual == null) break; // No hay más nodos alcanzables
-            if (actual.equals(destino)) break; // Llegamos al destino
+            // Obtener nodo NO visitado más cercano
+            for (Ubicacion u : ubicaciones) {
 
-            visitados.add(actual);
+                double d = dist.get(u.getId());
+                boolean v = visitado.get(u.getId());
 
-            for (Ruta ruta : grafo.getOrDefault(actual, new ArrayList<>())) {
-                Ubicacion vecino = ruta.getDestino();
-                double nuevaDist = distancias.get(actual) + ruta.getDistancia();
+                if (!v && d < min) {
+                    min = d;
+                    actualId = u.getId();
+                }
+            }
 
-                if (nuevaDist < distancias.getOrDefault(vecino, Double.MAX_VALUE)) {
-                    distancias.put(vecino, nuevaDist);
+            if (actualId == null) break;
+            if (actualId.equals(destino.getId())) break;
+
+            visitado.put(actualId, true);
+
+            //
+            ListaSimpleEnlazada<Arista> lista = grafo.obtenerAdyacentes(actualId);
+            if (lista == null) continue;
+
+            for (Arista a : lista) {
+
+                String vecinoId = a.getDestino();
+                double nuevaDist = dist.get(actualId) + a.getPeso();
+
+                if (nuevaDist < dist.get(vecinoId)) {
+                    dist.put(vecinoId, nuevaDist);
                 }
             }
         }
 
-        return distancias.getOrDefault(destino, Double.MAX_VALUE);
+        return dist.get(destino.getId());
     }
+
 }
