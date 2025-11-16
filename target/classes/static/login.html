@@ -299,14 +299,14 @@
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        var email = document.getElementById('email').value;
-        var password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
         try {
-            const response = await fetch("http://localhost:8080/auth/login", {
-                method: "POST",
+            const response = await fetch('/auth/login', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     email: email,
@@ -321,23 +321,30 @@
 
             const user = await response.json();
 
-            showAlert("Bienvenido " + user.nombrePersona, "success");
-
-            // Guardar usuario en el navegador
-            localStorage.setItem("usuario", JSON.stringify(user));
+            showAlert("Inicio de sesión exitoso", "success");
 
             setTimeout(() => {
-                if (user.hasOwnProperty("idAdministrador")) {
-                    window.location.href = "admin.html";
-                } else if (user.hasOwnProperty("idOperador")) {
-                    window.location.href = "operador.html";
+                if (user.email && user.password && user.nombrePersona) {
+                    // Es administrador o operador
+                    if (user.hasOwnProperty('estadoSalud')) {
+                        // Es un afectado (no debe iniciar sesión)
+                        showAlert("Un afectado no puede iniciar sesión", "error");
+                    } else if (user.hasOwnProperty('generarInforme')) {
+                        // administrador
+                        window.location.href = "admin.html";
+                    } else {
+                        // operador
+                        window.location.href = "operador.html";
+                    }
                 }
-            }, 1500);
+            }, 1000);
 
         } catch (error) {
-            showAlert("Error de conexión con el servidor", "error");
+            showAlert("No se pudo conectar con el servidor", "error");
+            console.error(error);
         }
     });
+
 
 </script>
 </body>
