@@ -301,12 +301,13 @@
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const rol = document.getElementById('rol').value;
 
         try {
-            const response = await fetch('/auth/login', {
-                method: 'POST',
+            const response = await fetch("http://localhost:8080/auth/login", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     email: email,
@@ -321,61 +322,21 @@
 
             const user = await response.json();
 
-            // Llamada real al backend
-            fetch("http://localhost:8080/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Credenciales incorrectas");
-                    }
-                    return response.json();
-                })
-                .then(user => {
-                    showAlert("Inicio de sesión exitoso. Bienvenido " + user.nombrePersona + "!", "success");
-
-                    // Redirigir según rol
-                    setTimeout(() => {
-                        if (rol === 'administrador') {
-                            window.location.href = "admin.html";
-                        } else {
-                            window.location.href = "operador.html";
-                        }
-                    }, 2000);
-                })
-                .catch(err => {
-                    showAlert(err.message, "error");
-                });
-
+            showAlert("Inicio de sesión exitoso. Bienvenido " + user.nombrePersona + "!", "success");
 
             setTimeout(() => {
-                if (user.email && user.password && user.nombrePersona) {
-                    // Es administrador o operador
-                    if (user.hasOwnProperty('estadoSalud')) {
-                        // Es un afectado (no debe iniciar sesión)
-                        showAlert("Un afectado no puede iniciar sesión", "error");
-                    } else if (user.hasOwnProperty('generarInforme')) {
-                        // administrador
-                        window.location.href = "admin.html";
-                    } else {
-                        // operador
-                        window.location.href = "operador.html";
-                    }
+                if (rol === 'administrador') {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "operador.html";
                 }
-            }, 1000);
+            }, 1500);
 
         } catch (error) {
-            showAlert("No se pudo conectar con el servidor", "error");
-            console.error(error);
+            showAlert("Error al conectar con el servidor", "error");
         }
     });
+
 
 
 </script>
