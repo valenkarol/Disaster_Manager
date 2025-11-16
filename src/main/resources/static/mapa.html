@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - Sistema de Gestión de Desastres</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0d5ff 0%, #c4b5fd 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            position: relative;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .search-container {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #7c3aed;
+            border: none;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .user-badge {
+            background: #6d28d9;
+            padding: 0.5rem 1rem;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-left: 1rem;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 70px);
+            position: relative;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 500;
+        }
+
+        .sidebar-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .priority-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .priority-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .priority-dots {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .priority-label {
+            background: white;
+            color: #5b21b6;
+            padding: 0.3rem 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .location-item {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .location-item:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .location-icon {
+            font-size: 1.5rem;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-title {
+            color: white;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .location-address {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            background: white;
+            border: 2px solid #7c3aed;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: #7c3aed;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 2rem;
+            left: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .marker-high { background: #dc2626; }
+        .marker-medium { background: #f59e0b; }
+        .marker-low { background: #10b981; }
+
+        .legend-line {
+            width: 30px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .line-available { background: #3b82f6; }
+        .line-blocked {
+            background: repeating-linear-gradient(
+                    90deg,
+                    #dc2626,
+                    #dc2626 5px,
+                    transparent 5px,
+                    transparent 10px
+            );
+            height: 4px;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 280px;
+            max-width: 350px;
+            display: none;
+        }
+
+        .info-panel.active {
+            display: block;
+        }
+
+        .info-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        .info-close:hover {
+            color: #dc2626;
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: #7c3aed;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-right: 2rem;
+        }
+
+        .info-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .info-detail:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6b7280;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        /* Estilos de marcadores personalizados */
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+
+        .marker-pin {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border: 3px solid white;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .marker-high { background: #dc2626; }
+        .marker-medium { background: #f59e0b; }
+        .marker-low { background: #10b981; }
+
+        .pulse-ring {
+            animation: pulse 2s ease-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(124, 58, 237, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                width: 100%;
+                height: 40vh;
+                bottom: 0;
+                top: auto;
+            }
+            .main-container {
+                flex-direction: column;
+            }
+            .legend {
+                bottom: 42vh;
+                left: 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <button class="menu-btn">☰</button>
+    <div class="header-title">🗺️ Sistema de Gestión de Desastres</div>
+    <div class="search-container">
+        <input type="text" placeholder="Buscar ubicación..." id="searchInput">
+        <button class="search-btn" onclick="searchLocation()">🔍</button>
+    </div>
+    <div class="user-badge">KM</div>
+</header>
+
+<div class="main-container">
+    <aside class="sidebar">
+        <h2 class="sidebar-title">Panel de Ubicaciones afectadas</h2>
+        <p class="sidebar-subtitle">Consulte las ubicaciones afectadas</p>
+
+        <div class="priority-section">
+            <div class="priority-header">
+                <div class="priority-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <span class="priority-label">NIVEL DE PRIORIDAD</span>
+            </div>
+
+            <div id="locationsList"></div>
+        </div>
+    </aside>
+
+    <div class="map-container">
+        <div id="map"></div>
+
+        <div class="map-controls">
+            <button class="control-btn" onclick="zoomIn()" title="Acercar">+</button>
+            <button class="control-btn" onclick="zoomOut()" title="Alejar">−</button>
+            <button class="control-btn" onclick="centerMap()" title="Centrar">⊙</button>
+            <button class="control-btn" onclick="toggleRoutes()" title="Mostrar/Ocultar Rutas">🛣</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">📍 Leyenda</div>
+            <div class="legend-item">
+                <div class="legend-marker marker-high"></div>
+                <span>Prioridad Alta</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker marker-medium"></div>
+                <span>Prioridad Media</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-marker marker-low"></div>
+                <span>Prioridad Baja</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line line-available"></div>
+                <span>Ruta Disponible</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line line-blocked"></div>
+                <span>Ruta Bloqueada</span>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            <button class="info-close" onclick="closeInfoPanel()">×</button>
+            <div class="info-title" id="infoTitle">Ubicación</div>
+            <div id="infoContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variables globales
+    let map;
+    let markers = [];
+    let routeLines = [];
+    let showingRoutes = true;
+
+    // Coordenadas reales de Armenia, Quindío, Colombia
+    const locations = [
+        {
+            id: 1,
+            name: "Centro Armenia",
+            address: "Carrera 14 con Calle 21, Centro",
+            lat: 4.5339,
+            lng: -75.6811,
+            priority: "high",
+            type: "CIUDAD",
+            resources: 120,
+            evacuados: 450,
+            equipos: 3,
+            nivelRiesgo: 9
+        },
+        {
+            id: 2,
+            name: "Parque de la Vida",
+            address: "Zona Norte Armenia",
+            lat: 4.5489,
+            lng: -75.6711,
+            priority: "medium",
+            type: "REFUGIO",
+            resources: 85,
+            evacuados: 280,
+            equipos: 2,
+            nivelRiesgo: 6
+        },
+        {
+            id: 3,
+            name: "Estación de Bomberos",
+            address: "Av. Bolívar Sur",
+            lat: 4.5189,
+            lng: -75.6911,
+            priority: "low",
+            type: "CENTRO DE AYUDA",
+            resources: 200,
+            evacuados: 150,
+            equipos: 4,
+            nivelRiesgo: 3
+        },
+        {
+            id: 4,
+            name: "Zona Industrial",
+            address: "Sector Oriental Armenia",
+            lat: 4.5339,
+            lng: -75.6611,
+            priority: "high",
+            type: "CIUDAD",
+            resources: 95,
+            evacuados: 520,
+            equipos: 3,
+            nivelRiesgo: 8
+        },
+        {
+            id: 5,
+            name: "Hospital San Juan de Dios",
+            address: "Calle 12 con Carrera 15",
+            lat: 4.5289,
+            lng: -75.6761,
+            priority: "medium",
+            type: "REFUGIO",
+            resources: 150,
+            evacuados: 320,
+            equipos: 2,
+            nivelRiesgo: 5
+        },
+        {
+            id: 6,
+            name: "Universidad del Quindío",
+            address: "Av. Bolívar Norte",
+            lat: 4.5589,
+            lng: -75.6911,
+            priority: "medium",
+            type: "REFUGIO",
+            resources: 180,
+            evacuados: 600,
+            equipos: 5,
+            nivelRiesgo: 4
+        },
+        {
+            id: 7,
+            name: "Terminal de Transportes",
+            address: "Calle 35 con Carrera 20",
+            lat: 4.5139,
+            lng: -75.6661,
+            priority: "high",
+            type: "CIUDAD",
+            resources: 110,
+            evacuados: 380,
+            equipos: 3,
+            nivelRiesgo: 7
+        }
+    ];
+
+    // Rutas reales entre ubicaciones
+    const routes = [
+        { from: 0, to: 1, distance: 2.5, status: "disponible" },
+        { from: 1, to: 5, distance: 3.2, status: "disponible" },
+        { from: 0, to: 4, distance: 1.8, status: "disponible" },
+        { from: 4, to: 3, distance: 2.1, status: "bloqueada" },
+        { from: 0, to: 2, distance: 3.5, status: "disponible" },
+        { from: 2, to: 6, distance: 4.2, status: "disponible" },
+        { from: 3, to: 6, distance: 3.8, status: "bloqueada" },
+        { from: 1, to: 3, distance: 2.9, status: "disponible" }
+    ];
+
+    // Inicializar mapa
+    function initMap() {
+        // Crear mapa centrado en Armenia, Quindío
+        map = L.map('map', {
+            center: [4.5339, -75.6811],
+            zoom: 14,
+            zoomControl: false,
+            minZoom: 12,
+            maxZoom: 18
+        });
+
+        // Capa base de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Agregar ubicaciones y rutas
+        addLocations();
+        addRoutes();
+        populateSidebar();
+
+        console.log('Mapa inicializado correctamente');
+    }
+
+    // Agregar ubicaciones al mapa
+    function addLocations() {
+        locations.forEach((location, index) => {
+            // Crear icono personalizado
+            const iconHtml = `<div class="marker-pin marker-${location.priority}">${location.id}</div>`;
+
+            const customIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: iconHtml,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+                popupAnchor: [0, -15]
+            });
+
+            // Crear marcador
+            const marker = L.marker([location.lat, location.lng], {
+                icon: customIcon,
+                title: location.name
+            }).addTo(map);
+
+            // Contenido del popup
+            const popupContent = `
+                    <div style="padding: 10px; min-width: 200px;">
+                        <h3 style="color: #7c3aed; margin: 0 0 10px 0; font-size: 1.1em;">${location.name}</h3>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Dirección:</strong> ${location.address}</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Tipo:</strong> ${location.type}</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Riesgo:</strong> ${location.nivelRiesgo}/10</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Recursos:</strong> ${location.resources} unidades</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Evacuados:</strong> ${location.evacuados} personas</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Equipos:</strong> ${location.equipos} equipos</p>
+                    </div>
+                `;
+
+            marker.bindPopup(popupContent);
+
+            // Evento click
+            marker.on('click', () => {
+                showLocationInfo(index);
+            });
+
+            markers.push(marker);
+        });
+
+        console.log(`${locations.length} ubicaciones agregadas al mapa`);
+    }
+
+    // Agregar rutas al mapa
+    function addRoutes() {
+        routes.forEach(route => {
+            const from = locations[route.from];
+            const to = locations[route.to];
+
+            const color = route.status === "disponible" ? '#3b82f6' : '#dc2626';
+            const dashArray = route.status === "disponible" ? null : '10, 10';
+
+            const polyline = L.polyline(
+                [[from.lat, from.lng], [to.lat, to.lng]],
+                {
+                    color: color,
+                    weight: 4,
+                    opacity: 0.7,
+                    dashArray: dashArray
+                }
+            ).addTo(map);
+
+            // Popup para rutas
+            polyline.bindPopup(`
+                    <div style="padding: 10px;">
+                        <h4 style="margin: 0 0 10px 0;">🛣️ Ruta de Transporte</h4>
+                        <p style="margin: 5px 0;"><strong>Desde:</strong> ${from.name}</p>
+                        <p style="margin: 5px 0;"><strong>Hasta:</strong> ${to.name}</p>
+                        <p style="margin: 5px 0;"><strong>Distancia:</strong> ${route.distance} km</p>
+                        <p style="margin: 5px 0;"><strong>Estado:</strong>
+                            <span style="color: ${color}; font-weight: bold;">${route.status.toUpperCase()}</span>
+                        </p>
+                    </div>
+                `);
+
+            routeLines.push(polyline);
+        });
+
+        console.log(`${routes.length} rutas agregadas al mapa`);
+    }
+
+    // Poblar sidebar
+    function populateSidebar() {
+        const container = document.getElementById('locationsList');
+        container.innerHTML = '';
+
+        locations.forEach((location, index) => {
+            const icon = getPriorityIcon(location.priority);
+            const item = document.createElement('div');
+            item.className = 'location-item';
+            item.onclick = () => focusLocation(index);
+
+            item.innerHTML = `
+                    <div class="location-icon">${icon}</div>
+                    <div class="location-info">
+                        <div class="location-title">DIRECCIÓN</div>
+                        <div class="location-address">${location.name}</div>
+                    </div>
+                `;
+
+            container.appendChild(item);
+        });
+    }
+
+    // Enfocar ubicación
+    function focusLocation(index) {
+        const location = locations[index];
+        map.flyTo([location.lat, location.lng], 16, {
+            duration: 1.5
+        });
+        setTimeout(() => {
+            markers[index].openPopup();
+        }, 1500);
+        showLocationInfo(index);
+    }
+
+    // Mostrar información
+    function showLocationInfo(index) {
+        const location = locations[index];
+        const panel = document.getElementById('infoPanel');
+        const title = document.getElementById('infoTitle');
+        const content = document.getElementById('infoContent');
+
+        title.textContent = location.name;
+        content.innerHTML = `
+                <div class="info-detail">
+                    <span class="info-label">Dirección:</span>
+                    <span class="info-value">${location.address}</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Tipo:</span>
+                    <span class="info-value">${location.type}</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Prioridad:</span>
+                    <span class="info-value" style="color: ${getPriorityColor(location.priority)}">
+                        ${location.priority.toUpperCase()}
+                    </span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Nivel de Riesgo:</span>
+                    <span class="info-value">${location.nivelRiesgo}/10</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Recursos:</span>
+                    <span class="info-value">${location.resources} unidades</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Evacuados:</span>
+                    <span class="info-value">${location.evacuados} personas</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-label">Equipos:</span>
+                    <span class="info-value">${location.equipos} equipos</span>
+                </div>
+            `;
+
+        panel.classList.add('active');
+    }
+
+    // Cerrar panel
+    function closeInfoPanel() {
+        document.getElementById('infoPanel').classList.remove('active');
+    }
+
+    // Controles
+    function zoomIn() {
+        map.zoomIn();
+    }
+
+    function zoomOut() {
+        map.zoomOut();
+    }
+
+    function centerMap() {
+        map.flyTo([4.5339, -75.6811], 14, {
+            duration: 1.5
+        });
+    }
+
+    function toggleRoutes() {
+        showingRoutes = !showingRoutes;
+        routeLines.forEach(line => {
+            if (showingRoutes) {
+                line.addTo(map);
+            } else {
+                map.removeLayer(line);
+            }
+        });
+    }
+
+    // Funciones auxiliares
+    function getPriorityColor(priority) {
+        const colors = {
+            high: '#dc2626',
+            medium: '#f59e0b',
+            low: '#10b981'
+        };
+        return colors[priority] || '#6b7280';
+    }
+
+    function getPriorityIcon(priority) {
+        const icons = {
+            high: '🔴',
+            medium: '🟠',
+            low: '🟢'
+        };
+        return icons[priority] || '📍';
+    }
+
+    // Búsqueda
+    function searchLocation() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        if (!query) return;
+
+        const filtered = locations.filter(loc =>
+            loc.name.toLowerCase().includes(query) ||
+            loc.address.toLowerCase().includes(query)
+        );
+
+        if (filtered.length > 0) {
+            const first = filtered[0];
+            const index = locations.indexOf(first);
+            focusLocation(index);
+        } else {
+            alert('No se encontró ninguna ubicación con ese nombre');
+        }
+    }
+
+    // Enter para buscar
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            searchLocation();
+        }
+    });
+
+    // Inicializar al cargar
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+    } else {
+        initMap();
+    }
+</script>
+</body>
+</html>
