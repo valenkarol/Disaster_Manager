@@ -18,9 +18,9 @@ public class AdministradorController {
         this.administradorService = administradorService;
     }
 
-    @PostMapping
-    public ResponseEntity<Administrador> crearAdministrador(@RequestBody Administrador administrador) {
-        return new ResponseEntity<>(administradorService.crearAdministrador(administrador), HttpStatus.CREATED);
+    @PostMapping("/create")
+    public Administrador crear(@RequestBody Administrador admin) {
+        return administradorService.crearAdministrador(admin);
     }
 
     @GetMapping
