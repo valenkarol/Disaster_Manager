@@ -46,7 +46,7 @@ public class OperadorEmergencia extends Persona implements Comparable<OperadorEm
     }
 
     public void leer() {
-        System.out.println("Leyendo datos del operador: " + getIdPersona());
+        System.out.println("Leyendo datos del operador: " + getId());
     }
 
     public void actualizar() {

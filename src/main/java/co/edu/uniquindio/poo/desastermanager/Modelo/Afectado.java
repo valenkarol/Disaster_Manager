@@ -37,7 +37,7 @@ public class Afectado extends Persona implements Comparable<Afectado>{
     }
 
     public void leer() {
-        System.out.println("Leyendo datos del afectado: " + getIdPersona());
+        System.out.println("Leyendo datos del afectado: " + getId());
     }
 
     public void actualizar() {
