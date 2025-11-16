@@ -22,12 +22,13 @@ public class Administrador extends Persona implements Comparable<Administrador> 
     public int compareTo(Administrador otro) {
         if (otro == null) return 1;
 
-        // Compara por nombre, y si son iguales, por ID
-        int comparacion = this.getNombrePersona().compareToIgnoreCase(otro.getNombrePersona());
+        int comparacion = this.getNombrePersona()
+                .compareToIgnoreCase(otro.getNombrePersona());
+
         if (comparacion == 0) {
-            // Si los nombres son iguales, compara por ID
-            return this.idAdministrador.compareToIgnoreCase(otro.idAdministrador);
+            return this.email.compareToIgnoreCase(otro.email);
         }
+
         return comparacion;
     }
 
