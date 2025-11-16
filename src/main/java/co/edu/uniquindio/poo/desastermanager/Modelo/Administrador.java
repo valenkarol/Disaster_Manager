@@ -41,7 +41,7 @@ public class Administrador extends Persona implements Comparable<Administrador> 
     }
 
     public void leer() {
-        System.out.println("Leyendo datos del administrador: " + getIdPersona());
+        System.out.println("Leyendo datos del administrador: " + getId());
     }
 
     public void actualizar() {
