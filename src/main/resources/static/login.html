@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Gestión de Desastres</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .login-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e9d5ff;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon input {
+            padding-left: 2.5rem;
+        }
+
+        .icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            color: #9ca3af;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-option {
+            padding: 1rem;
+            border: 2px solid #e9d5ff;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .role-option:hover {
+            border-color: #c084fc;
+            background: #faf5ff;
+        }
+
+        .role-option.active {
+            border-color: #7c3aed;
+            background: #f5f3ff;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .role-option .role-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-option .role-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 0;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .role-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-header">
+        <div class="login-icon">⚠️</div>
+        <h1>Sistema de Desastres</h1>
+        <p>Gestión de Emergencias</p>
+    </div>
+
+    <div class="login-body">
+        <div id="alertBox"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Seleccione su Rol</label>
+                <div class="role-selector">
+                    <div class="role-option active" onclick="selectRole('administrador')">
+                        <div class="role-icon">👨‍💼</div>
+                        <div class="role-name">Administrador</div>
+                    </div>
+                    <div class="role-option" onclick="selectRole('operador')">
+                        <div class="role-icon">👨‍🚒</div>
+                        <div class="role-name">Operador</div>
+                    </div>
+                </div>
+                <input type="hidden" id="rol" value="administrador">
+            </div>
+
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <div class="input-icon">
+                    <span class="icon">👤</span>
+                    <input type="text" id="nombre" placeholder="Ingrese su nombre completo" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <div class="input-icon">
+                    <span class="icon">📧</span>
+                    <input type="email" id="email" placeholder="correo@ejemplo.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <div class="input-icon">
+                    <span class="icon">🔒</span>
+                    <input type="password" id="password" placeholder="Ingrese su contraseña" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </form>
+
+        <div class="form-footer">
+            <p>Sistema de Gestión de Desastres Naturales © 2025</p>
+            <p style="margin-top: 0.5rem;">Karol M Davila y Valentina Gutierrez</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var selectedRole = 'administrador';
+
+    function selectRole(role) {
+        selectedRole = role;
+        document.getElementById('rol').value = role;
+
+        var options = document.querySelectorAll('.role-option');
+        for (var i = 0; i < options.length; i++) {
+            options[i].classList.remove('active');
+        }
+
+        event.target.closest('.role-option').classList.add('active');
+    }
+
+    function showAlert(message, type) {
+        var alertBox = document.getElementById('alertBox');
+        var alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+        alertBox.innerHTML = '<div class="alert ' + alertClass + '">' + message + '</div>';
+
+        setTimeout(function() {
+            alertBox.innerHTML = '';
+        }, 5000);
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch("http://localhost:8080/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            if (!response.ok) {
+                showAlert("Credenciales incorrectas", "error");
+                return;
+            }
+
+            const user = await response.json();
+
+            showAlert("Bienvenido " + user.nombrePersona, "success");
+
+            // Guardar usuario en el navegador
+            localStorage.setItem("usuario", JSON.stringify(user));
+
+            setTimeout(() => {
+                if (user.hasOwnProperty("idAdministrador")) {
+                    window.location.href = "admin.html";
+                } else if (user.hasOwnProperty("idOperador")) {
+                    window.location.href = "operador.html";
+                }
+            }, 1500);
+
+        } catch (error) {
+            showAlert("Error de conexión con el servidor", "error");
+        }
+    });
+
+</script>
+</body>
+</html>
