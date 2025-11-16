@@ -279,10 +279,7 @@
         document.getElementById('rol').value = role;
 
         var options = document.querySelectorAll('.role-option');
-        for (var i = 0; i < options.length; i++) {
-            options[i].classList.remove('active');
-        }
-
+        options.forEach(o => o.classList.remove('active'));
         event.target.closest('.role-option').classList.add('active');
     }
 
@@ -291,9 +288,7 @@
         var alertClass = type === 'error' ? 'alert-error' : 'alert-success';
         alertBox.innerHTML = '<div class="alert ' + alertClass + '">' + message + '</div>';
 
-        setTimeout(function() {
-            alertBox.innerHTML = '';
-        }, 5000);
+        setTimeout(() => { alertBox.innerHTML = ''; }, 5000);
     }
 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -304,6 +299,8 @@
         const rol = document.getElementById('rol').value;
 
         try {
+
+            // *** ESTA ES LA ÚNICA LLAMADA CORRECTA ***
             const response = await fetch("http://localhost:8080/auth/login", {
                 method: "POST",
                 headers: {
@@ -334,9 +331,9 @@
 
         } catch (error) {
             showAlert("Error al conectar con el servidor", "error");
+            console.error(error);
         }
     });
-
 
 
 </script>
