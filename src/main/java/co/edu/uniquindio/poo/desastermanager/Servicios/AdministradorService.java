@@ -19,9 +19,25 @@ public class AdministradorService {
     }
 
     public Administrador login(String email, String password) {
-        return administradorRepository.findByEmail(email)
-                .filter(a -> a.getPassword().equals(password))
-                .orElse(null);
+        System.out.println("=== ADMIN login ===");
+        System.out.println("Buscando por email: " + email);
+
+        Administrador admin = administradorRepository.findByEmail(email).orElse(null);
+
+        System.out.println("Resultado de findByEmail: " + admin);
+
+        if (admin != null) {
+            System.out.println("Password en BD: " + admin.getPassword());
+            System.out.println("Password ingresada: " + password);
+        }
+
+        if (admin != null && admin.getPassword().equals(password)) {
+            System.out.println(">>> LOGIN ADMIN EXITOSO");
+            return admin;
+        }
+
+        System.out.println(">>> LOGIN ADMIN FALLÓ");
+        return null;
     }
 
     public Administrador crearAdministrador(Administrador administrador) {
