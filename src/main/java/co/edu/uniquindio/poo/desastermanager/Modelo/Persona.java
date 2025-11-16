@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 public class Persona {
     @Id
-    private String idPersona;
+    private String id;
     private String nombrePersona;
     private String apellidosPersona;
     private int edad;
