@@ -321,7 +321,39 @@
 
             const user = await response.json();
 
-            showAlert("Inicio de sesión exitoso", "success");
+            // Llamada real al backend
+            fetch("http://localhost:8080/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Credenciales incorrectas");
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    showAlert("Inicio de sesión exitoso. Bienvenido " + user.nombrePersona + "!", "success");
+
+                    // Redirigir según rol
+                    setTimeout(() => {
+                        if (rol === 'administrador') {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "operador.html";
+                        }
+                    }, 2000);
+                })
+                .catch(err => {
+                    showAlert(err.message, "error");
+                });
+
 
             setTimeout(() => {
                 if (user.email && user.password && user.nombrePersona) {
