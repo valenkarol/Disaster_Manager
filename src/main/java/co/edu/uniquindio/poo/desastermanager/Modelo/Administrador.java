@@ -13,8 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @EqualsAndHashCode(callSuper = true) //que es esto
 @Document(collection = "administradores")
 public class Administrador extends Persona implements Comparable<Administrador> {
-    @Id
-    private String idAdministrador;
+
 
     private String email;
     private String password;

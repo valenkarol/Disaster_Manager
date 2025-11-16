@@ -14,8 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "operadoresEmergencia")
 public class OperadorEmergencia extends Persona implements Comparable<OperadorEmergencia> {
 
-    @Id
-    private String idOperador;
+
 
     private String email;
     private String password;

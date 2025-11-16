@@ -14,8 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "afectados")
 public class Afectado extends Persona implements Comparable<Afectado>{
 
-    @Id
-    private String idAfectado;
+
     private String estadoSalud;
 
     @Override
