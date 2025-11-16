@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Desastres - Rutas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 8px;
+            border: none;
+            width: 250px;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .admin-badge {
+            background: #6d28d9;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6d28d9;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9d5ff;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+        }
+
+        .btn-red {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-red:hover {
+            background: #b91c1c;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f5f3ff;
+            border-radius: 8px;
+            border: 2px solid #e9d5ff;
+        }
+
+        .result-box h4 {
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-box p {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 0.25rem;
+        }
+
+        .route-item {
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid;
+            margin-bottom: 0.75rem;
+        }
+
+        .route-active {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .route-slow {
+            background: #fefce8;
+            border-color: #fef08a;
+        }
+
+        .route-blocked {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .route-name {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .route-details {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-active {
+            background: #16a34a;
+        }
+
+        .badge-slow {
+            background: #eab308;
+        }
+
+        .badge-blocked {
+            background: #ef4444;
+        }
+
+        .footer {
+            background: #6d28d9;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            .search-box input {
+                width: 100%;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="header-content">
+        <div class="header-title">⚠️ Sistema de Gestión de Desastres</div>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Buscar...">
+        </div>
+        <div class="admin-badge">ADMIN</div>
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="card">
+        <h2 class="card-title">📍 Panel de Rutas y Evacuación</h2>
+
+        <div class="grid-2">
+            <div>
+                <h3 class="section-title">Calcular Ruta Óptima</h3>
+                <form id="formRuta">
+                    <div class="form-group">
+                        <label>Ubicación Origen</label>
+                        <select id="origenRuta">
+                            <option>Zona Centro</option>
+                            <option>Zona Norte</option>
+                            <option>Zona Sur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ubicación Destino</label>
+                        <select id="destinoRuta">
+                            <option>Refugio Norte</option>
+                            <option>Centro Médico</option>
+                            <option>Centro de Ayuda</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="calcularRuta()">Calcular Ruta Más Corta</button>
+                </form>
+
+                <div class="result-box" id="resultadoRuta">
+                    <h4>Resultado:</h4>
+                    <p>Distancia: <strong>12.5 km</strong></p>
+                    <p>Tiempo estimado: <strong>18 min</strong></p>
+                    <p>Estado: <strong style="color: #16a34a;">Ruta Disponible</strong></p>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="section-title">Planificación de Evacuación</h3>
+                <form id="formEvacuacion">
+                    <div class="form-group">
+                        <label>Zona a Evacuar</label>
+                        <select id="zonaEvacuar">
+                            <option>Zona Centro</option>
+                            <option>Zona Norte</option>
+                            <option>Zona Sur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Afectados</label>
+                        <input type="number" id="numAfectados" placeholder="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Nivel de Prioridad</label>
+                        <select id="prioridadEvac">
+                            <option>Alta - Crítico</option>
+                            <option>Media - Urgente</option>
+                            <option>Baja - Normal</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-red" onclick="programarEvacuacion()">Programar Evacuación</button>
+                </form>
+            </div>
+        </div>
+
+        <h3 class="section-title">Rutas Activas</h3>
+
+        <div class="route-item route-active">
+            <div class="route-header">
+                <div>
+                    <div class="route-name">Centro → Refugio Norte</div>
+                    <div class="route-details">8.3 km • Estado: Operativa</div>
+                </div>
+                <span class="badge badge-active">ACTIVA</span>
+            </div>
+        </div>
+
+        <div class="route-item route-slow">
+            <div class="route-header">
+                <div>
+                    <div class="route-name">Sur → Centro Médico</div>
+                    <div class="route-details">15.7 km • Estado: Congestionada</div>
+                </div>
+                <span class="badge badge-slow">LENTA</span>
+            </div>
+        </div>
+
+        <div class="route-item route-blocked">
+            <div class="route-header">
+                <div>
+                    <div class="route-name">Norte → Centro</div>
+                    <div class="route-details">12.1 km • Estado: Bloqueada</div>
+                </div>
+                <span class="badge badge-blocked">BLOQUEADA</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Sistema de Gestión de Desastres Naturales © 2025</p>
+    <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.8;">Karol M Davila y Valentina Gutierrez</p>
+</footer>
+
+<script>
+    function calcularRuta() {
+        var origen = document.getElementById('origenRuta').value;
+        var destino = document.getElementById('destinoRuta').value;
+
+        alert('Calculando ruta óptima...\nOrigen: ' + origen + '\nDestino: ' + destino);
+
+        // Simulación de resultado
+        var distancia = (Math.random() * 20 + 5).toFixed(1);
+        var tiempo = Math.floor(Math.random() * 30 + 10);
+
+        document.getElementById('resultadoRuta').innerHTML =
+            '<h4>Resultado:</h4>' +
+            '<p>Distancia: <strong>' + distancia + ' km</strong></p>' +
+            '<p>Tiempo estimado: <strong>' + tiempo + ' min</strong></p>' +
+            '<p>Estado: <strong style="color: #16a34a;">Ruta Disponible</strong></p>';
+    }
+
+    function programarEvacuacion() {
+        var zona = document.getElementById('zonaEvacuar').value;
+        var numAfectados = document.getElementById('numAfectados').value;
+        var prioridad = document.getElementById('prioridadEvac').value;
+
+        if (!numAfectados) {
+            alert('Por favor ingrese el número de afectados');
+            return;
+        }
+
+        alert('Evacuación programada:\n' +
+            'Zona: ' + zona + '\n' +
+            'Afectados: ' + numAfectados + '\n' +
+            'Prioridad: ' + prioridad);
+    }
+</script>
+</body>
+</html>
