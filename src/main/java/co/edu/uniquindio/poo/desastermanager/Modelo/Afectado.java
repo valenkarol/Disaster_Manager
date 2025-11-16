@@ -25,11 +25,6 @@ public class Afectado extends Persona implements Comparable<Afectado>{
         int comparacion = this.getNombrePersona().compareToIgnoreCase(otro.getNombrePersona());
 
 
-        // Si ambos son iguales, compara por idAfectado
-        if (comparacion == 0) {
-            comparacion = this.idAfectado.compareToIgnoreCase(otro.idAfectado);
-        }
-
         return comparacion;
     }
 

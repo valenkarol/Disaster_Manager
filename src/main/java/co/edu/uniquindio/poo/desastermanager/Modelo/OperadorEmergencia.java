@@ -23,9 +23,14 @@ public class OperadorEmergencia extends Persona implements Comparable<OperadorEm
     public int compareTo(OperadorEmergencia otro) {
         if (otro == null) return 1;
 
-        return this.idOperador.compareTo(otro.idOperador);
-    }
+        int comparacion = this.getNombrePersona()
+                .compareToIgnoreCase(otro.getNombrePersona());
 
+        if (comparacion == 0) {
+            return this.email.compareToIgnoreCase(otro.email);
+        }
+        return comparacion;
+    }
 
     public void monitorearZona(Zona zona) {
         System.out.println("Monitoreando zona: " + zona.getNombreZona() + " (riesgo " + zona.getNivelRiesgo() + ")");
