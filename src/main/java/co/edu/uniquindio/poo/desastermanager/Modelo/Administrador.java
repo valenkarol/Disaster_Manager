@@ -16,6 +16,9 @@ public class Administrador extends Persona implements Comparable<Administrador> 
     @Id
     private String idAdministrador;
 
+    private String email;
+    private String password;
+
     @Override
     public int compareTo(Administrador otro) {
         if (otro == null) return 1;

@@ -18,6 +18,12 @@ public class AdministradorService {
         this.administradorRepository = administradorRepository;
     }
 
+    public Administrador login(String email, String password) {
+        return administradorRepository.findByEmail(email)
+                .filter(a -> a.getPassword().equals(password))
+                .orElse(null);
+    }
+
     public Administrador crearAdministrador(Administrador administrador) {
         return administradorRepository.save(administrador);
     }

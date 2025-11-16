@@ -18,6 +18,11 @@ public class OperadorEmergenciaService {
     public OperadorEmergenciaService(OperadorEmergenciaRepository operadorRepository) {
         this.operadorRepository = operadorRepository;
     }
+    public OperadorEmergencia login(String email, String password) {
+        return operadorRepository.findByEmail(email)
+                .filter(o -> o.getPassword().equals(password))
+                .orElse(null);
+    }
 
     public OperadorEmergencia crearOperador(OperadorEmergencia operador) {
         return operadorRepository.save(operador);

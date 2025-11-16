@@ -17,6 +17,9 @@ public class OperadorEmergencia extends Persona implements Comparable<OperadorEm
     @Id
     private String idOperador;
 
+    private String email;
+    private String password;
+
     @Override
     public int compareTo(OperadorEmergencia otro) {
         if (otro == null) return 1;
