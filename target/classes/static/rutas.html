@@ -404,10 +404,6 @@
                 </form>
 
                 <div class="result-box" id="resultadoRuta">
-                    <h4>Resultado:</h4>
-                    <p>Distancia: <strong>12.5 km</strong></p>
-                    <p>Tiempo estimado: <strong>18 min</strong></p>
-                    <p>Estado: <strong style="color: #16a34a;">Ruta Disponible</strong></p>
                 </div>
             </div>
 
@@ -467,15 +463,15 @@
 
         const data = await response.json();
 
-        // Actualizar el recuadro completo
         document.getElementById("resultadoRuta").innerHTML = `
-        <h4>Resultado:</h4>
-        <p>Distancia: <strong>${data.distancia} km</strong></p>
-        <p>Tiempo estimado: <strong>${data.tiempo} min</strong></p>
-        <p>Estado: <strong style="color:#16a34a">${data.estado}</strong></p>
-    `;
+            <h4>Resultado:</h4>
+            <p>Distancia: <strong>${data.distancia} km</strong></p>
+            <p>Tiempo estimado: <strong>${data.tiempo} min</strong></p>
+            <p>Estado: <strong style="color:#16a34a">${data.estado}</strong></p>
+        `;
     });
 </script>
+
 
 
 <script>
@@ -528,7 +524,7 @@
             rutas.forEach(ruta => {
                 const div = document.createElement("div");
                 div.textContent =
-                    `${ruta.origen.nombre} → ${ruta.destino.nombre} • ${ruta.distancia} km • Estado: ${ruta.estado}`;
+                    `${ruta.origen.id} → ${ruta.destino.id} • ${ruta.distancia} km • Estado: ${ruta.estadoRuta}`;
                 contenedor.appendChild(div);
             });
 
@@ -540,6 +536,7 @@
 
     cargarRutasActivas();
 </script>
+
 
 
 </body>
