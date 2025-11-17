@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 public class Ruta implements Comparable<Ruta>{
     @Id
+    private String id;
     private Ubicacion origen;
     private Ubicacion destino;
     private double distancia;
