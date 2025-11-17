@@ -19,9 +19,25 @@ public class OperadorEmergenciaService {
         this.operadorRepository = operadorRepository;
     }
     public OperadorEmergencia login(String email, String password) {
-        return operadorRepository.findByEmail(email)
-                .filter(o -> o.getPassword().equals(password))
-                .orElse(null);
+        System.out.println("=== OPERADOR login ===");
+        System.out.println("Buscando por email: " + email);
+
+        OperadorEmergencia operador = operadorRepository.findByEmail(email).orElse(null);
+
+        System.out.println("Resultado findByEmail: " + operador);
+
+        if (operador != null) {
+            System.out.println("Password en BD: " + operador.getPassword());
+            System.out.println("Password ingresada: " + password);
+        }
+
+        if (operador != null && operador.getPassword().equals(password)) {
+            System.out.println(">>> LOGIN OPERADOR EXITOSO");
+            return operador;
+        }
+
+        System.out.println(">>> LOGIN OPERADOR FALLÓ");
+        return null;
     }
 
     public OperadorEmergencia crearOperador(OperadorEmergencia operador) {
