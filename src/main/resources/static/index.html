@@ -229,6 +229,13 @@
     </style>
 </head>
 <body>
+<script>
+    const rol = localStorage.getItem("rol");
+    if (!rol) {
+        alert("Debes iniciar sesión");
+        window.location.href = "login.html";
+    }
+</script>
 <header class="header">
     <div class="header-content">
         <div class="header-title">⚠️ Sistema de Gestión de Desastres</div>

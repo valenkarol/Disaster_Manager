@@ -283,6 +283,18 @@
     </style>
 </head>
 <body>
+<script>
+    const rol = localStorage.getItem("rol");
+
+    if (!rol) {
+        window.location.href = "login.html";
+    }
+
+    if (rol !== "administrador") {
+        alert("No tienes permiso para acceder a este panel");
+        window.location.href = "index.html";
+    }
+</script>
 <header class="header">
     <button class="menu-btn">☰</button>
     <div class="header-title">Sistema de Gestión de Desastres</div>
