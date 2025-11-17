@@ -319,13 +319,18 @@
 
             const user = await response.json();
 
+            localStorage.setItem("usuario", JSON.stringify(user));
+            localStorage.setItem("rol", rol);
+
+
             showAlert("Inicio de sesión exitoso. Bienvenido " + user.nombrePersona + "!", "success");
 
+            // Redirigir según rol
             setTimeout(() => {
                 if (rol === 'administrador') {
                     window.location.href = "admin.html";
                 } else {
-                    window.location.href = "operador.html";
+                    window.location.href = "index.html"; // Home para operadores
                 }
             }, 1500);
 
