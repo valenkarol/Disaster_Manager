@@ -4,7 +4,9 @@ import co.edu.uniquindio.poo.desastermanager.Modelo.Afectado;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Equipo;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Zona;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.EquipoRepository;
+import co.edu.uniquindio.poo.desastermanager.Repositorio.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,8 @@ public class EquipoService {
 
     @Autowired
     private EquipoRepository equipoRepository;
-
+    @Autowired
+    private ZonaRepository zonaRepository;
     public Equipo guardarEquipo(Equipo equipo) {
         return equipoRepository.save(equipo);
     }
@@ -35,6 +38,25 @@ public class EquipoService {
 
         // 3. Retornamos nuestra estructura
         return listaPropia;
+    }
+    public boolean asignarEquipoAZona(String zonaId, String equipoId, int cantidadMiembros) {
+        Optional<Equipo> equipoOpt = obtenerEquipoPorId(equipoId);
+        if (!equipoOpt.isPresent()) return false;
+
+        Equipo equipo = equipoOpt.get();
+
+        Optional<Zona> zonaOpt = zonaRepository.findById(zonaId);
+        if (!zonaOpt.isPresent()) return false;
+
+        Zona zona = zonaOpt.get();
+
+        // Puedes registrar la asignación, o guardar histórico,
+        // o solo simular según lo necesiten
+        equipo.setCantidadMiembros(cantidadMiembros);
+        equipo.setZonaAsignada(zonaId); // debes agregar este campo en Equipo.java
+
+        guardarEquipo(equipo);
+        return true;
     }
 
     // READ - por ID

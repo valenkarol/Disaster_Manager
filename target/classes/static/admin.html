@@ -316,9 +316,9 @@
                     <div class="form-group">
                         <label>Zona Destino</label>
                         <select id="zonaRecurso">
-                            <option>Zona Centro</option>
-                            <option>Zona Norte</option>
-                            <option>Zona Sur</option>
+                            <option value="Z1">Zona Centro</option>
+                            <option value="Z2">Zona Norte</option>
+                            <option value="Z3">Zona Sur</option>
                         </select>
                     </div>
                     <button type="button" class="btn btn-primary" onclick="asignarRecurso()">Asignar Recurso</button>
@@ -369,38 +369,75 @@
 </footer>
 
 <script>
-    function asignarRecurso() {
-        var tipo = document.getElementById('tipoRecurso').value;
-        var cantidad = document.getElementById('cantidadRecurso').value;
-        var zona = document.getElementById('zonaRecurso').value;
 
-        if (!cantidad) {
-            alert('Por favor ingrese la cantidad');
-            return;
+    async function crearRecurso(tipo, cantidad) {
+        const recurso = {
+            nombreRecurso: tipo,
+            cantidadDisponible: cantidad
+        };
+
+        const res = await fetch("http://localhost:8080/recurso", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(recurso)
+        });
+
+        if (!res.ok) {
+            alert("Error creando recurso");
+            return null;
         }
 
-        alert('Recurso asignado:\n' + tipo + ' - ' + cantidad + ' unidades\nDestino: ' + zona);
+        return await res.json();
     }
 
-    function asignarEquipo() {
-        var tipo = document.getElementById('tipoEquipo').value;
-        var cantidad = document.getElementById('cantidadMiembros').value;
-        var zona = document.getElementById('zonaEquipo').value;
+        async function asignarRecurso() {
+
+        const tipo = document.getElementById('tipoRecurso').value;
+        const cantidad = document.getElementById('cantidadRecurso').value;
+        const zona = document.getElementById('zonaRecurso').value;
 
         if (!cantidad) {
-            alert('Por favor ingrese la cantidad de miembros');
-            return;
-        }
-
-        alert('Equipo asignado:\n' + tipo + ' - ' + cantidad + ' miembros\nDestino: ' + zona);
+        alert("Ingrese una cantidad válida");
+        return;
     }
 
-    function generarInforme() {
-        alert('Generando informe general del sistema...');
+        try {
+        // 1. Obtener ID del recurso según tipo
+        const recursos = await fetch("http://localhost:8080/recurso").then(r => r.json());
+
+        let recursoEncontrado = null;
+
+        for (let nodo of recursos.lista) {
+        if (nodo.valor.tipoRecurso === tipo) {
+        recursoEncontrado = nodo.valor;
+        break;
+    }
     }
 
-    function exportarPDF() {
-        alert('Exportando informe a PDF...');
+        if (!recursoEncontrado) {
+        alert("No existe ese recurso en la base de datos");
+        return;
+    }
+
+        // 2. Asignar recurso a la zona
+        const response = await fetch(
+        "http://localhost:8080/arbol/asignar?zonaId=" + zona + "&recursoId=" + recursoEncontrado.idRecurso,
+    {
+        method: "POST"
+    }
+        );
+
+        if (!response.ok) {
+        alert("Error al asignar recurso");
+        return;
+    }
+
+        alert("Recurso asignado correctamente!");
+
+    } catch (error) {
+        console.log(error);
+        alert("Error conectando con el servidor");
+    }
     }
 </script>
 </body>

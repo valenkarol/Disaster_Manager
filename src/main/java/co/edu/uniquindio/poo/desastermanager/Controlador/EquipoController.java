@@ -58,4 +58,23 @@ public class EquipoController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PostMapping("/asignar")
+    public ResponseEntity<String> asignarEquipo(
+            @RequestParam String zonaId,
+            @RequestParam String equipoId,
+            @RequestParam int cantidadMiembros) {
+
+        try {
+            boolean ok = equipoService.asignarEquipoAZona(zonaId, equipoId, cantidadMiembros);
+
+            if (!ok) {
+                return new ResponseEntity<>("No se pudo asignar el equipo", HttpStatus.BAD_REQUEST);
+            }
+
+            return new ResponseEntity<>("Equipo asignado correctamente", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

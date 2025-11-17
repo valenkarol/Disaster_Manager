@@ -17,6 +17,7 @@ public class Equipo implements Comparable<Equipo>{
     @Id
     private int cantidadMiembros;
     private TipoEquipoRescate tipo;
+    private String zonaAsignada;
 
     @Override
     public int compareTo(Equipo otro) {
