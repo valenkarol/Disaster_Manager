@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -39,7 +40,7 @@ public class RutaController {
     }
 
     @PostMapping("/calcular")
-    public ResponseEntity<MapaSimple<String, Object>> calcularRuta(@RequestBody Map<String, String> req) {
+    public ResponseEntity<Map<String, Object>> calcularRuta(@RequestBody Map<String, String> req) {
         Ubicacion origen = ubicacionRepository.findById(req.get("origen")).orElse(null);
         Ubicacion destino = ubicacionRepository.findById(req.get("destino")).orElse(null);
 
@@ -48,10 +49,15 @@ public class RutaController {
         // Usar tu lógica Dijkstra
         double distancia = rutaService.rutaMasCorta(origen, destino);
 
+        // Calcular tiempo realista
+        double velocidadKmH = 40; // puedes ajustar
+        double tiempoMinutos = (distancia / velocidadKmH) * 60;
+        tiempoMinutos = Math.round(tiempoMinutos * 10) / 10.0; // redondeo a 1 decimal
+
         // Usar MapaSimple para la respuesta
-        MapaSimple<String, Object> result = new MapaSimple<>(3);
+        Map<String, Object> result = new HashMap<>();
         result.put("distancia", distancia);
-        result.put("tiempo", distancia * 1.5); // ejemplo de tiempo
+        result.put("tiempo", tiempoMinutos); // ejemplo de tiempo
         result.put("estado", "Ruta Disponible");
 
         return ResponseEntity.ok(result);
