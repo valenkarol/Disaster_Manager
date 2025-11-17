@@ -406,6 +406,87 @@
     </style>
 </head>
 <body>
+<script>
+    const rol = localStorage.getItem("rol");
+    if (!rol) {
+        alert("Debes iniciar sesión");
+        window.location.href = "login.html";
+    }
+</script>
+
+<nav style="background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%); padding: 15px; display: flex; gap: 10px; justify-content: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); flex-wrap: wrap;">
+    <style>
+        .nav-button {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-button.active {
+            background: white;
+            color: #7c3aed;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button-logout {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-button-logout:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- Inicio -->
+    <button class="nav-button" onclick="window.location.href='index.html'">🏠 Inicio</button>
+
+    <!-- Admin panel -->
+    <button class="nav-button" onclick="window.location.href='admin.html'">⚙️ Administración</button>
+
+    <!-- Mapa -->
+    <button class="nav-button active" onclick="window.location.href='mapa.html'">🗺️ Mapa</button>
+
+    <!-- Rutas -->
+    <button class="nav-button" onclick="window.location.href='rutas.html'">📍 Rutas</button>
+
+    <!-- Estadísticas -->
+    <button class="nav-button" onclick="window.location.href='estadisticas.html'">📊 Estadísticas</button>
+
+    <!-- Logout -->
+    <button class="nav-button-logout" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+</nav>
+
+<script>
+    function cerrarSesion() {
+        if (confirm('¿Está seguro que desea cerrar sesión?')) {
+            alert('Sesión cerrada exitosamente');
+            window.location.href = 'login.html';
+        }
+    }
+</script>
+
 <header class="header">
     <button class="menu-btn">☰</button>
     <div class="header-title">🗺️ Sistema de Gestión de Desastres</div>
