@@ -470,21 +470,65 @@
             '<p>Estado: <strong style="color: #16a34a;">Ruta Disponible</strong></p>';
     }
 
-    function programarEvacuacion() {
+</script>
+
+<script>
+    document.getElementById("btnCalcularRuta").addEventListener("click", async () => {
+        const origen = document.getElementById("origen").value;
+        const destino = document.getElementById("destino").value;
+
+        const response = await fetch("http://localhost:8080/rutas/calcular", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ origen, destino })
+        });
+
+        const data = await response.json();
+
+        // Actualizar resultados
+        document.getElementById("distancia").textContent = data.distancia + " km";
+        document.getElementById("tiempo").textContent = data.tiempo + " min";
+        document.getElementById("estadoRuta").textContent = data.estado;
+    });
+</script>
+
+<script>
+    async function programarEvacuacion() {
         var zona = document.getElementById('zonaEvacuar').value;
-        var numAfectados = document.getElementById('numAfectados').value;
+        var numAfectados = parseInt(document.getElementById('numAfectados').value);
         var prioridad = document.getElementById('prioridadEvac').value;
 
-        if (!numAfectados) {
-            alert('Por favor ingrese el número de afectados');
+        if (!numAfectados || !zona || !prioridad) {
+            alert('Por favor complete todos los campos');
             return;
         }
 
-        alert('Evacuación programada:\n' +
-            'Zona: ' + zona + '\n' +
-            'Afectados: ' + numAfectados + '\n' +
-            'Prioridad: ' + prioridad);
+        try {
+            const response = await fetch("http://localhost:8080/evacuaciones", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    zona: zona,
+                    numeroAfectados: numAfectados,
+                    prioridad: prioridad
+                })
+            });
+
+            if (!response.ok) throw new Error("Error al programar evacuación");
+
+            const data = await response.json();
+
+            document.getElementById('infoEvacuacion').textContent =
+                `Evacuación programada:\nZona: ${data.zona}, Afectados: ${data.numeroAfectados}, Prioridad: ${data.prioridad}`;
+
+            cargarEvacuacionesActivas();
+
+        } catch (err) {
+            alert(err.message);
+        }
     }
 </script>
+
+
 </body>
 </html>
