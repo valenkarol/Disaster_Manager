@@ -23,6 +23,15 @@ public class DesasterManagerApplication {
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
+
+                registry.addMapping("/rutas/**")
+                        .allowedOrigins("http://localhost:63342")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+
+                registry.addMapping("/evacuaciones/**")
+                        .allowedOrigins("http://localhost:63342")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+
             }
         };
     }

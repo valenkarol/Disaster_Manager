@@ -255,6 +255,32 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Contenedor para rutas y cuadro prioritario */
+        .grid-2-prioridad {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        /* Rutas activas */
+        #contenedorRutasActivas {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        /* Cuadro de evacuación prioritaria */
+        .cuadro-prioritario {
+            background-color: #fff4f4;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            max-width: 250px;
+        }
+
     </style>
 </head>
 <body>
@@ -374,7 +400,7 @@
                             <option>Centro de Ayuda</option>
                         </select>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="calcularRuta()">Calcular Ruta Más Corta</button>
+                    <button type="button" class="btn btn-primary" id="btnCalcularRuta">Calcular Ruta Más Corta</button>
                 </form>
 
                 <div class="result-box" id="resultadoRuta">
@@ -408,42 +434,17 @@
                             <option>Baja - Normal</option>
                         </select>
                     </div>
-                    <button type="button" class="btn btn-red" onclick="programarEvacuacion()">Programar Evacuación</button>
+                    <button type="button" class="btn btn-red" id="btnProgramarEvacuacion">Programar Evacuación</button>
                 </form>
             </div>
         </div>
 
-        <h3 class="section-title">Rutas Activas</h3>
-
-        <div class="route-item route-active">
-            <div class="route-header">
-                <div>
-                    <div class="route-name">Centro → Refugio Norte</div>
-                    <div class="route-details">8.3 km • Estado: Operativa</div>
-                </div>
-                <span class="badge badge-active">ACTIVA</span>
-            </div>
+        <!-- Bloque de Rutas Activas -->
+        <div id="contenedorRutasActivas">
+            <h3 class="section-title">Rutas Activas</h3>
+            <!-- Aquí se llenarán las rutas dinámicamente desde JS -->
         </div>
 
-        <div class="route-item route-slow">
-            <div class="route-header">
-                <div>
-                    <div class="route-name">Sur → Centro Médico</div>
-                    <div class="route-details">15.7 km • Estado: Congestionada</div>
-                </div>
-                <span class="badge badge-slow">LENTA</span>
-            </div>
-        </div>
-
-        <div class="route-item route-blocked">
-            <div class="route-header">
-                <div>
-                    <div class="route-name">Norte → Centro</div>
-                    <div class="route-details">12.1 km • Estado: Bloqueada</div>
-                </div>
-                <span class="badge badge-blocked">BLOQUEADA</span>
-            </div>
-        </div>
     </div>
 </main>
 
@@ -453,29 +454,10 @@
 </footer>
 
 <script>
-    function calcularRuta() {
-        var origen = document.getElementById('origenRuta').value;
-        var destino = document.getElementById('destinoRuta').value;
-
-        alert('Calculando ruta óptima...\nOrigen: ' + origen + '\nDestino: ' + destino);
-
-        // Simulación de resultado
-        var distancia = (Math.random() * 20 + 5).toFixed(1);
-        var tiempo = Math.floor(Math.random() * 30 + 10);
-
-        document.getElementById('resultadoRuta').innerHTML =
-            '<h4>Resultado:</h4>' +
-            '<p>Distancia: <strong>' + distancia + ' km</strong></p>' +
-            '<p>Tiempo estimado: <strong>' + tiempo + ' min</strong></p>' +
-            '<p>Estado: <strong style="color: #16a34a;">Ruta Disponible</strong></p>';
-    }
-
-</script>
-
-<script>
     document.getElementById("btnCalcularRuta").addEventListener("click", async () => {
-        const origen = document.getElementById("origen").value;
-        const destino = document.getElementById("destino").value;
+
+        const origen = document.getElementById("origenRuta").value;
+        const destino = document.getElementById("destinoRuta").value;
 
         const response = await fetch("http://localhost:8080/rutas/calcular", {
             method: "POST",
@@ -485,18 +467,22 @@
 
         const data = await response.json();
 
-        // Actualizar resultados
-        document.getElementById("distancia").textContent = data.distancia + " km";
-        document.getElementById("tiempo").textContent = data.tiempo + " min";
-        document.getElementById("estadoRuta").textContent = data.estado;
+        // Actualizar el recuadro completo
+        document.getElementById("resultadoRuta").innerHTML = `
+        <h4>Resultado:</h4>
+        <p>Distancia: <strong>${data.distancia} km</strong></p>
+        <p>Tiempo estimado: <strong>${data.tiempo} min</strong></p>
+        <p>Estado: <strong style="color:#16a34a">${data.estado}</strong></p>
+    `;
     });
 </script>
 
+
 <script>
     async function programarEvacuacion() {
-        var zona = document.getElementById('zonaEvacuar').value;
-        var numAfectados = parseInt(document.getElementById('numAfectados').value);
-        var prioridad = document.getElementById('prioridadEvac').value;
+        const zona = document.getElementById('zonaEvacuar').value;
+        const numAfectados = parseInt(document.getElementById('numAfectados').value);
+        const prioridad = document.getElementById('prioridadEvac').value;
 
         if (!numAfectados || !zona || !prioridad) {
             alert('Por favor complete todos los campos');
@@ -508,25 +494,51 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    zona: zona,
+                    zona,
                     numeroAfectados: numAfectados,
-                    prioridad: prioridad
+                    prioridad
                 })
             });
 
             if (!response.ok) throw new Error("Error al programar evacuación");
 
-            const data = await response.json();
-
-            document.getElementById('infoEvacuacion').textContent =
-                `Evacuación programada:\nZona: ${data.zona}, Afectados: ${data.numeroAfectados}, Prioridad: ${data.prioridad}`;
-
-            cargarEvacuacionesActivas();
+            alert("Evacuación programada correctamente");
 
         } catch (err) {
             alert(err.message);
         }
     }
+
+    document.getElementById("btnProgramarEvacuacion")
+        .addEventListener("click", programarEvacuacion);
+</script>
+
+
+<script>
+    async function cargarRutasActivas() {
+        try {
+            const response = await fetch("http://localhost:8080/rutas");
+            if (!response.ok) throw new Error("Error al obtener rutas");
+
+            const rutas = await response.json();
+            const contenedor = document.getElementById("contenedorRutasActivas");
+
+            contenedor.innerHTML = `<h3 class="section-title">Rutas Activas</h3>`;
+
+            rutas.forEach(ruta => {
+                const div = document.createElement("div");
+                div.textContent =
+                    `${ruta.origen.nombre} → ${ruta.destino.nombre} • ${ruta.distancia} km • Estado: ${ruta.estado}`;
+                contenedor.appendChild(div);
+            });
+
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    }
+
+    cargarRutasActivas();
 </script>
 
 
