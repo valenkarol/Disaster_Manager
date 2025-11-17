@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/zonas")
 public class ZonaController {
@@ -24,8 +27,13 @@ public class ZonaController {
     }
 
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Zona>> listarZonas() {
-        return new ResponseEntity<>(zonaService.listarZonas(), HttpStatus.OK);
+    public ResponseEntity<List<Zona>> listarZonas() {
+        ListaSimpleEnlazada<Zona> listaPropia = zonaService.listarZonas();
+        List<Zona> listaNormal = new ArrayList<>();
+        for (Zona zona : listaPropia) {
+            listaNormal.add(zona);
+        }
+        return new ResponseEntity<>(listaNormal, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
