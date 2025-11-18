@@ -1,14 +1,15 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
-import co.edu.uniquindio.poo.desastermanager.Modelo.Estadistica;
+import co.edu.uniquindio.poo.desastermanager.Modelo.*;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ColaPrioridad;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
-import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
-import co.edu.uniquindio.poo.desastermanager.Modelo.Zona;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.EvacuacionRepository;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -17,6 +18,10 @@ public class EstadisticaService {
     @Autowired
     private ZonaService zonaService; // Devuelve ListaSimpleEnlazada<Zona>
 
+    @Autowired
+    private UbicacionService ubicacionService;
+    @Autowired
+    private RecursoService recursoService;
     @Autowired
     private EvacuacionService evacuacionService; // Devuelve ListaSimpleEnlazada<Evacuacion>
 
@@ -67,4 +72,52 @@ public class EstadisticaService {
         // Si está en la cola → no procesada
         return !colaPrioridad.contiene(ev);
     }
+
+    public List<EstadisticaZonaDTO> generarDashboardZonas() {
+
+        List<EstadisticaZonaDTO> resultado = new ArrayList<>();
+
+        ListaSimpleEnlazada<Zona> zonas = zonaService.listarZonas();
+        ListaSimpleEnlazada<Evacuacion> evacuaciones = evacuacionService.listarEvacuaciones();
+        ListaSimpleEnlazada<Recurso> recursos = recursoService.listarRecursos();
+
+        for (Zona z : zonas) {
+
+            int evacuados = 0;
+            int pendientes = 0;
+
+            // Buscar evacuaciones relacionadas a esta zona
+            for (Evacuacion ev : evacuaciones) {
+                if (ev.getZona() != null && ev.getZona().getId().equals(z.getId())) {
+                    if (evacuacionService.esProcesada(ev))
+                        evacuados += ev.getNumeroAfectados();
+                    else
+                        pendientes += ev.getNumeroAfectados();
+                }
+            }
+
+            // Buscar recursos asignados a esta zona
+            int recursosTotales = 0;
+            for (Recurso r : recursos) {
+                if (z.getId().equals(r.getZonaAsignada())) {
+                    recursosTotales += r.getCantidad();
+                }
+            }
+
+            resultado.add(
+                    new EstadisticaZonaDTO(
+                            z.getId(),
+                            z.getNombreZona(),
+                            z.getNivelRiesgo(),
+                            evacuados,
+                            pendientes,
+                            recursosTotales
+                    )
+            );
+        }
+
+        return resultado;
+    }
+
+
 }

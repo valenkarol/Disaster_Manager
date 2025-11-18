@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Estadistica;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstadisticaZonaDTO;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Servicios.EstadisticaService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +65,17 @@ public class EstadisticaController {
 
             return new ResponseEntity<>(listaFiltrada, HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/dashboard/zonas")
+    public ResponseEntity<List<EstadisticaZonaDTO>> dashboardZonas() {
+        try {
+            List<EstadisticaZonaDTO> data = estadisticaService.generarDashboardZonas();
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
