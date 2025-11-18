@@ -413,10 +413,11 @@
                     <div class="form-group">
                         <label>Zona a Evacuar</label>
                         <select id="zonaEvacuar">
-                            <option>Zona Centro</option>
-                            <option>Zona Norte</option>
-                            <option>Zona Sur</option>
+                            <option value="zona_centro">Zona Centro</option>
+                            <option value="zona_norte">Zona Norte</option>
+                            <option value="zona_sur">Zona Sur</option>
                         </select>
+
                     </div>
                     <div class="form-group">
                         <label>Número de Afectados</label>
@@ -437,9 +438,77 @@
 
         <!-- Bloque de Rutas Activas -->
         <div id="contenedorRutasActivas">
-            <h3 class="section-title">Rutas Activas</h3>
+            <h3 class="section-title">🛣️ Rutas Activas</h3>
             <!-- Aquí se llenarán las rutas dinámicamente desde JS -->
         </div>
+
+        <!-- Bloque de Evacuaciones Pendientes -->
+        <div class="evacuaciones-container">
+            <h2>Evacuaciones Pendientes</h2>
+
+            <!-- Lista donde se cargan las evacuaciones -->
+            <div id="listaEvacuaciones" class="lista-evacuaciones">
+                <p>Cargando evacuaciones...</p>
+            </div>
+
+            <br>
+
+            <!-- Botón para procesar una evacuación -->
+            <button id="btnProcesar" class="boton-procesar">
+                Procesar Evacuación
+            </button>
+
+            <br><br>
+
+            <!-- Resultado de la evacuación procesada -->
+            <div id="evacuacionProcesada" class="resultado-evacuacion">
+                <!-- Aquí se muestra la evacuación procesada -->
+            </div>
+        </div>
+
+        <!-- ESTILO PARA RUTAS Y EVACUACIONES -->
+        <style>
+            /* Contenedores de cards */
+            #contenedorRutasActivas .ruta-card,
+            #listaEvacuaciones .ev-item {
+                background-color: #f3f3f3;
+                border-radius: 8px;
+                padding: 10px 15px;
+                margin: 10px 0;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            /* Título sección */
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+
+            /* Botón morado */
+            .boton-procesar {
+                background-color: #6b21a8; /* morado */
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 1rem;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .boton-procesar:hover {
+                background-color: #7e22ce; /* morado más brillante al pasar mouse */
+            }
+
+            /* Evacuaciones pendientes */
+            .evacuaciones-container h2 {
+                margin-bottom: 15px;
+            }
+
+            #listaEvacuaciones .ev-item p {
+                margin: 3px 0;
+            }
+        </style>
 
     </div>
 </main>
@@ -476,27 +545,35 @@
 
 <script>
     async function programarEvacuacion() {
-        const zona = document.getElementById('zonaEvacuar').value;
+        const zonaId = document.getElementById('zonaEvacuar').value;
         const numAfectados = parseInt(document.getElementById('numAfectados').value);
-        const prioridad = document.getElementById('prioridadEvac').value;
+        const prioridadTexto = document.getElementById('prioridadEvac').value;
 
-        if (!numAfectados || !zona || !prioridad) {
+        if (!numAfectados || !zonaId || !prioridadTexto) {
             alert('Por favor complete todos los campos');
             return;
         }
+
+        // Convertir prioridad en número
+        let prioridad = 1;
+        if (prioridadTexto.includes("Alta")) prioridad = 3;
+        else if (prioridadTexto.includes("Media")) prioridad = 2;
 
         try {
             const response = await fetch("http://localhost:8080/evacuaciones", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    zona,
+                    zona: { id: zonaId },  // <<<<<< CORRECTO
                     numeroAfectados: numAfectados,
-                    prioridad
+                    prioridad: prioridad
                 })
             });
 
-            if (!response.ok) throw new Error("Error al programar evacuación");
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error("Error al programar evacuación\n" + text);
+            }
 
             alert("Evacuación programada correctamente");
 
@@ -506,8 +583,9 @@
     }
 
     document.getElementById("btnProgramarEvacuacion")
-        .addEventListener("click", programarEvacuacion);
+        .onclick = programarEvacuacion;
 </script>
+
 
 
 <script>
@@ -517,19 +595,25 @@
             if (!response.ok) throw new Error("Error al obtener rutas");
 
             const rutas = await response.json();
-            const contenedor = document.getElementById("contenedorRutasActivas");
+            console.log("RUTAS:", rutas);
 
+            const contenedor = document.getElementById("contenedorRutasActivas");
             contenedor.innerHTML = `<h3 class="section-title">Rutas Activas</h3>`;
 
             rutas.forEach(ruta => {
                 const div = document.createElement("div");
+
+                const origen = ruta.origen?.id ?? "Origen desconocido";
+                const destino = ruta.destino?.id ?? "Destino desconocido";
+
                 div.textContent =
-                    `${ruta.origen.id} → ${ruta.destino.id} • ${ruta.distancia} km • Estado: ${ruta.estadoRuta}`;
+                    `${origen} → ${destino} • ${ruta.distancia} km • Estado: ${ruta.estadoRuta}`;
+
                 contenedor.appendChild(div);
             });
 
         } catch (err) {
-            console.error(err);
+            console.error("ERROR:", err);
             alert(err.message);
         }
     }
@@ -538,6 +622,108 @@
 </script>
 
 
+
+<script>
+    document.getElementById("btnProgramarEvacuacion").addEventListener("click", async () => {
+
+        const zonaId = document.getElementById("zonaEvacuar").value;
+        const numeroAfectados = parseInt(document.getElementById("numAfectados").value);
+        const prioridadTexto = document.getElementById("prioridadEvac").value;
+
+        let prioridad = 1;
+        if (prioridadTexto.includes("Alta")) prioridad = 3;
+        else if (prioridadTexto.includes("Media")) prioridad = 2;
+
+        // *** ESTA ES LA PARTE CRÍTICA ***
+        const evacuacion = {
+            zona: { id: zonaId },  // <<<<<<<<<<<<<<<<<<<<<<<<
+            numeroAfectados,
+            prioridad
+        };
+
+        const response = await fetch("http://localhost:8080/evacuaciones", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(evacuacion)
+        });
+
+        if (response.ok) {
+            alert("Evacuación programada exitosamente.");
+            cargarEvacuacionesPendientes();
+        } else {
+            const err = await response.text();
+            alert("ERROR: " + err);
+        }
+    });
+
+</script>
+
+
+<script>
+    async function cargarEvacuacionesPendientes() {
+        try {
+            const res = await fetch("http://localhost:8080/evacuaciones");
+            const lista = await res.json();
+
+            let html = "";
+
+            if (!Array.isArray(lista) || lista.length === 0) {
+                document.getElementById("listaEvacuaciones").innerHTML =
+                    "<p>No hay evacuaciones pendientes.</p>";
+                return;
+            }
+
+            lista.forEach(ev => {
+                html += `
+                    <div class="ev-item">
+                        <p><strong>Zona:</strong> ${ev.zona?.nombreZona ?? "Sin zona"}</p>
+                        <p><strong>Riesgo:</strong> ${ev.zona?.nivelRiesgo ?? "?"}</p>
+                        <p><strong>Afectados:</strong> ${ev.numeroAfectados}</p>
+                        <p><strong>Prioridad:</strong> ${ev.prioridad}</p>
+                        <hr>
+                    </div>
+                `;
+            });
+
+            document.getElementById("listaEvacuaciones").innerHTML = html;
+
+        } catch (error) {
+            console.error("Error cargando evacuaciones:", error);
+            document.getElementById("listaEvacuaciones").innerHTML =
+                "<p>Error al cargar evacuaciones.</p>";
+        }
+    }
+
+    cargarEvacuacionesPendientes();
+</script>
+
+<script>
+    document.getElementById("btnProcesar").addEventListener("click", async () => {
+        try {
+            const res = await fetch("http://localhost:8080/evacuaciones/procesar");
+
+            if (res.status === 204) {
+                alert("No hay evacuaciones pendientes.");
+                return;
+            }
+
+            const ev = await res.json();
+
+            document.getElementById("evacuacionProcesada").innerHTML = `
+                <h4>Evacuación Procesada:</h4>
+                <p><strong>Zona:</strong> ${ev.zona.nombreZona}</p>
+                <p><strong>Afectados:</strong> ${ev.numeroAfectados}</p>
+                <p><strong>Prioridad:</strong> ${ev.prioridad}</p>
+            `;
+
+            cargarEvacuacionesPendientes(); // actualizar lista
+
+        } catch (error) {
+            console.error("Error procesando evacuación:", error);
+            alert("Ocurrió un error al procesar la evacuación.");
+        }
+    });
+</script>
 
 </body>
 </html>

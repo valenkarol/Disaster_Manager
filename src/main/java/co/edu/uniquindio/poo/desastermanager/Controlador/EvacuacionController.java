@@ -1,6 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
 import co.edu.uniquindio.poo.desastermanager.Servicios.EvacuacionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,9 +37,20 @@ public class EvacuacionController {
     // 2. LISTAR (LISTA PROPIA)
     // ==================================================
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Evacuacion>> listarEvacuaciones() {
-        return new ResponseEntity<>(evacuacionService.listarEvacuaciones(), HttpStatus.OK);
+    public ResponseEntity<List<Evacuacion>> listarEvacuaciones() {
+        ListaSimpleEnlazada<Evacuacion> listaPropia = evacuacionService.listarEvacuaciones();
+        List<Evacuacion> listaJson = new ArrayList<>();
+
+        NodoLS<Evacuacion> nodo = listaPropia.getPrimero();
+        while (nodo != null) {
+            listaJson.add(nodo.getDato());
+            nodo = nodo.getProximo();
+        }
+
+
+        return new ResponseEntity<>(listaJson, HttpStatus.OK);
     }
+
 
     // ==================================================
     // 3. OBTENER POR ID
@@ -84,12 +98,10 @@ public class EvacuacionController {
     // ==================================================
     @GetMapping("/procesar")
     public ResponseEntity<Evacuacion> procesarEvacuacion() {
-        Evacuacion evacuacion = evacuacionService.procesarEvacuacion();
-
-        if (evacuacion != null) {
-            return new ResponseEntity<>(evacuacion, HttpStatus.OK);
+        Evacuacion ev = evacuacionService.procesarEvacuacion();
+        if (ev != null) {
+            return new ResponseEntity<>(ev, HttpStatus.OK);
         }
-
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 

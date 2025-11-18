@@ -2,6 +2,7 @@ package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.MapaSimple;
+import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ruta;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Ubicacion;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.UbicacionRepository;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,8 +38,17 @@ public class RutaController {
     }
 
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Ruta>> listarRutas() {
-        return new ResponseEntity<>(rutaService.listarRutas(), HttpStatus.OK);
+    public ResponseEntity<List<Ruta>> listarRutas() {
+        ListaSimpleEnlazada<Ruta> listaPropia = rutaService.listarRutas();
+        List<Ruta> listaJson = new ArrayList<>();
+
+        NodoLS<Ruta> nodo = listaPropia.getPrimero();
+        while (nodo != null) {
+            listaJson.add(nodo.getDato());
+            nodo = nodo.getProximo();
+        }
+
+        return new ResponseEntity<>(listaJson, HttpStatus.OK);
     }
 
     @PostMapping("/calcular")
