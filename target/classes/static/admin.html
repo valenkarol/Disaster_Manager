@@ -180,6 +180,52 @@
             margin-top: 3rem;
         }
 
+        /* Estilos para el contenedor del informe */
+        .informe-container {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .informe-box {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        #resumenInforme {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #1f2937;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        #resumenInforme::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #resumenInforme::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #resumenInforme::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 4px;
+        }
+
+        #resumenInforme::-webkit-scrollbar-thumb:hover {
+            background: #6d28d9;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -188,6 +234,9 @@
                 width: 100%;
             }
             .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .informe-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -338,9 +387,12 @@
 
         <div class="divider">
             <h3 class="section-title">Generar Informe</h3>
-            <div class="grid-2">
-                <button class="btn btn-blue" onclick="generarInforme()">Generar Informe General</button>
-                <button class="btn btn-green" onclick="exportarPDF()">Exportar a PDF</button>
+            <div class="informe-container">
+                <button class="btn btn-blue" onclick="generarInforme()" style="width: auto; min-width: 200px;">Generar Informe General</button>
+                <div class="informe-box">
+                    <h3 style="color: #7c3aed; margin-bottom: 1rem; font-size: 1.1rem;">📋 Resumen del Informe</h3>
+                    <pre id="resumenInforme" style="color: #6b7280;">No se ha generado ningún informe aún.</pre>
+                </div>
             </div>
         </div>
     </div>
@@ -457,6 +509,24 @@
             }
 
             alert(text);
+
+        } catch (error) {
+            console.error(error);
+            alert("Error conectando con el servidor");
+        }
+    }
+    async function generarInforme() {
+        try {
+            const res = await fetch("http://localhost:8080/informes/generar", { method: "POST" });
+
+            if (!res.ok) {
+                const text = await res.text();
+                alert("Error al generar informe: " + text);
+                return;
+            }
+
+            const resumen = await res.text();
+            document.getElementById("resumenInforme").textContent = resumen;
 
         } catch (error) {
             console.error(error);

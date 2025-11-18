@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/informes")
 public class InformeController {
@@ -75,22 +75,13 @@ public class InformeController {
     }
 
     @PostMapping("/generar")
-    public ResponseEntity<Informe> generarInforme() {
+    public ResponseEntity<String> generarInforme() {
         try {
             Informe informe = informeService.realizarInforme();
-            return new ResponseEntity<>(informe, HttpStatus.CREATED);
+            return new ResponseEntity<>(informe.getResumen(), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al generar informe: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/{id}/exportar")
-    public ResponseEntity<String> exportarInforme(@PathVariable String id) {
-        boolean existe = informeService.existeInforme(id);
 
-        if (!existe) {
-            return new ResponseEntity<>("Informe no encontrado", HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>("Exportando informe " + id + "...", HttpStatus.OK);
-    }
 }

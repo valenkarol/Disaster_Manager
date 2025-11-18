@@ -17,6 +17,7 @@ public class Informe implements Comparable<Informe>{
     @Id
     private String id;
     private LocalDateTime fecha;
+    private String resumen;
 
     @Override
     public int compareTo(Informe otro) {
@@ -56,7 +57,4 @@ public class Informe implements Comparable<Informe>{
         return "Resumen del informe generado el " + fecha;
     }
 
-    public void exportarPDF() {
-        System.out.println("Exportando informe " + id + " a PDF...");
-    }
 }

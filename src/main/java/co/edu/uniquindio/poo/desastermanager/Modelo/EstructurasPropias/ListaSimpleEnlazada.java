@@ -190,6 +190,9 @@ public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>
             }
         };
     }
+    public NodoLS<T> getPrimero() {
+        return primero;
+    }
 
     public int tamaño() {
         return tamaño;
