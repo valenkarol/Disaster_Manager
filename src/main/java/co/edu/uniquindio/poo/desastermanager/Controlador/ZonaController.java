@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -23,18 +25,33 @@ public class ZonaController {
 
     @PostMapping
     public ResponseEntity<Zona> crearZona(@RequestBody Zona zona) {
-        return new ResponseEntity<>(zonaService.crearZona(zona), HttpStatus.CREATED);
+        try {
+            Zona nuevaZona = zonaService.crearZona(zona);
+            return new ResponseEntity<>(nuevaZona, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<Zona>> listarZonas() {
-        ListaSimpleEnlazada<Zona> listaPropia = zonaService.listarZonas();
-        List<Zona> listaNormal = new ArrayList<>();
-        for (Zona zona : listaPropia) {
-            listaNormal.add(zona);
+    public ResponseEntity<Map<String, Object>> listarZonas() {
+        try {
+            ListaSimpleEnlazada<Zona> listaPropia = zonaService.listarZonas();
+
+            // Convertir a List estándar para JSON
+            List<Zona> listaStandard = new ArrayList<>();
+            for (Zona zona : listaPropia) {
+                listaStandard.add(zona);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("lista", listaStandard);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(listaNormal, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarZona(@PathVariable String id) {

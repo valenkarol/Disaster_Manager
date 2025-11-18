@@ -37,16 +37,15 @@ public class ZonaService {
 
     public ListaSimpleEnlazada<Zona> listarZonas() {
         ListaSimpleEnlazada<Zona> listaPropia = new ListaSimpleEnlazada<>();
+        List<Zona> listaMongo = zonaRepository.findAll();
 
-        // 1. Mongo devuelve una List normal
-        java.util.List<Zona> listaMongo = zonaRepository.findAll();
+        System.out.println("Zonas encontradas en MongoDB: " + listaMongo.size());
 
-        // 2. Convertimos a nuestra lista
         for (Zona zona: listaMongo) {
+            System.out.println("Zona: " + zona.getId() + " - " + zona.getNombreZona());
             listaPropia.agregarUltimo(new NodoLS<>(zona));
         }
 
-        // 3. Retornamos nuestra estructura
         return listaPropia;
     }
     public void eliminarZona(String id) {

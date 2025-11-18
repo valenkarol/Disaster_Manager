@@ -40,22 +40,20 @@ public class EquipoService {
         return listaPropia;
     }
     public boolean asignarEquipoAZona(String zonaId, String equipoId, int cantidadMiembros) {
-        Optional<Equipo> equipoOpt = obtenerEquipoPorId(equipoId);
-        if (!equipoOpt.isPresent()) return false;
 
-        Equipo equipo = equipoOpt.get();
+        Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
+        if (!equipoOpt.isPresent()) return false;
 
         Optional<Zona> zonaOpt = zonaRepository.findById(zonaId);
         if (!zonaOpt.isPresent()) return false;
 
-        Zona zona = zonaOpt.get();
+        Equipo equipo = equipoOpt.get();
 
-        // Puedes registrar la asignación, o guardar histórico,
-        // o solo simular según lo necesiten
+        // Actualizamos la asignación
         equipo.setCantidadMiembros(cantidadMiembros);
-        equipo.setZonaAsignada(zonaId); // debes agregar este campo en Equipo.java
+        equipo.setZonaAsignada(zonaId);
 
-        guardarEquipo(equipo);
+        equipoRepository.save(equipo);
         return true;
     }
 

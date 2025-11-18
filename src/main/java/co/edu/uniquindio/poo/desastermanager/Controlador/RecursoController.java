@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.Optional;
-
-@Repository
-@RequestMapping("/recurso")
+import java.util.*;
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/recursos")
 public class RecursoController {
 
     @Autowired
@@ -21,8 +21,21 @@ public class RecursoController {
 
     // READ - obtener todos- CAMBIAR POR LISTA PROPIA
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Recurso>> listarRecursos() {
-        return new ResponseEntity<>(recursoService.listarRecursos(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> listarRecursos() {
+        try {
+            ListaSimpleEnlazada<Recurso> listaPropia = recursoService.listarRecursos();
+
+            List<Recurso> listaStandard = new ArrayList<>();
+            for (Recurso recurso : listaPropia) {
+                listaStandard.add(recurso);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("lista", listaStandard);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // READ - obtener uno por ID CAMBIAR POR MAP PROPIO

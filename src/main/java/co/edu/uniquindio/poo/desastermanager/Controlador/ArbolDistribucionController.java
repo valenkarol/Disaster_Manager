@@ -26,7 +26,7 @@ public class ArbolDistribucionController {
     @Autowired
     private final ArbolDistribucionService arbolService;
 
-    public ArbolDistribucionController(ArbolDistribucionService service, ArbolDistribucionService arbolService) {
+    public ArbolDistribucionController(ArbolDistribucionService arbolService) {
         this.arbolService = arbolService;
     }
 
@@ -47,7 +47,13 @@ public class ArbolDistribucionController {
             }
             Recurso recurso = recursoOpt.get();
 
+            // 1️⃣ Asignar al árbol
             arbolService.asignarRecursoAZona(zona, recurso);
+
+            // 2️⃣ Actualizar la zona asignada en MongoDB
+            recurso.setZonaAsignada(zona.getId());
+            recursoService.guardarRecurso(recurso); // <-- Guarda los cambios en MongoDB
+
             return new ResponseEntity<>("Recurso asignado correctamente", HttpStatus.OK);
 
         } catch (Exception e) {

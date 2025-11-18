@@ -64,7 +64,7 @@ public class ArbolDistribucion {
             recorrerInorden(nodo.getIzquierda());
             System.out.println("Zona: " + nodo.getZona().getNombreZona() +
                     " | Riesgo: " + nodo.getZona().getNivelRiesgo() +
-                    " | Recurso: " + nodo.getRecursoAsignado().getNombre());
+                    " | Recurso: " + nodo.getRecursoAsignado().getTipo().name());
             recorrerInorden(nodo.getDerecha());
         }
     }

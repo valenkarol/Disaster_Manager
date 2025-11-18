@@ -4,12 +4,14 @@ import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimp
 import co.edu.uniquindio.poo.desastermanager.Modelo.Informe;
 import co.edu.uniquindio.poo.desastermanager.Servicios.InformeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/informes")
@@ -19,8 +21,22 @@ public class InformeController {
 
     // GET - listar todos CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Informe>> listarInformes() {
-        return new ResponseEntity<>(informeService.listarInformes(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> listarInformes() {
+        try {
+            ListaSimpleEnlazada<Informe> listaPropia = informeService.listarInformes();
+
+            // Convertir a List estándar para JSON
+            List<Informe> listaStandard = new ArrayList<>();
+            for (Informe informe : listaPropia) {
+                listaStandard.add(informe);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("lista", listaStandard);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // GET - uno por ID REALIZAR MAPA PROPIO TAL VEZ
@@ -66,5 +82,15 @@ public class InformeController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @GetMapping("/{id}/exportar")
+    public ResponseEntity<String> exportarInforme(@PathVariable String id) {
+        boolean existe = informeService.existeInforme(id);
+
+        if (!existe) {
+            return new ResponseEntity<>("Informe no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Exportando informe " + id + "...", HttpStatus.OK);
     }
 }

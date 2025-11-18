@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.Optional;
-
+import java.util.*;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/equipos")
 public class EquipoController {
@@ -20,8 +20,21 @@ public class EquipoController {
 
     // GET - listar todos CAMBIAR A LISTA PROPIA
     @GetMapping
-    public ResponseEntity<ListaSimpleEnlazada<Equipo>> listarEquipos() {
-        return new ResponseEntity<>(equipoService.listarEquipos(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> listarEquipos() {
+        try {
+            ListaSimpleEnlazada<Equipo> listaPropia = equipoService.listarEquipos();
+
+            List<Equipo> listaStandard = new ArrayList<>();
+            for (Equipo equipo : listaPropia) {
+                listaStandard.add(equipo);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("lista", listaStandard);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // GET - obtener uno MIRAR SI IMPLEMENTAR MAPA PROPIO

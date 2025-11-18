@@ -19,6 +19,8 @@ public class Recurso implements Comparable<Recurso>{
     private String nombre;
     private int cantidad;
     private TipoRecurso tipo;
+    private String zonaAsignada;
+    private String equipoAsignado;
 
     @Override
     public int compareTo(Recurso otro) {

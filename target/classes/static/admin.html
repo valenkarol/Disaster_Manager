@@ -302,12 +302,7 @@
                 <form id="formRecursos">
                     <div class="form-group">
                         <label>Tipo de Recurso</label>
-                        <select id="tipoRecurso">
-                            <option>ALIMENTO</option>
-                            <option>MEDICINA</option>
-                            <option>AGUA</option>
-                            <option>EQUIPO</option>
-                        </select>
+                        <select id="tipoRecurso"></select>
                     </div>
                     <div class="form-group">
                         <label>Cantidad</label>
@@ -315,11 +310,7 @@
                     </div>
                     <div class="form-group">
                         <label>Zona Destino</label>
-                        <select id="zonaRecurso">
-                            <option value="Z1">Zona Centro</option>
-                            <option value="Z2">Zona Norte</option>
-                            <option value="Z3">Zona Sur</option>
-                        </select>
+                        <select id="zonaRecurso"></select>
                     </div>
                     <button type="button" class="btn btn-primary" onclick="asignarRecurso()">Asignar Recurso</button>
                 </form>
@@ -330,11 +321,7 @@
                 <form id="formEquipos">
                     <div class="form-group">
                         <label>Tipo de Equipo</label>
-                        <select id="tipoEquipo">
-                            <option>MÉDICO</option>
-                            <option>BOMBERO</option>
-                            <option>MILITAR</option>
-                        </select>
+                        <select id="tipoEquipo"></select>
                     </div>
                     <div class="form-group">
                         <label>Cantidad de Miembros</label>
@@ -342,11 +329,7 @@
                     </div>
                     <div class="form-group">
                         <label>Zona de Asignación</label>
-                        <select id="zonaEquipo">
-                            <option>Zona Centro</option>
-                            <option>Zona Norte</option>
-                            <option>Zona Sur</option>
-                        </select>
+                        <select id="zonaEquipo"></select>
                     </div>
                     <button type="button" class="btn btn-primary" onclick="asignarEquipo()">Asignar Equipo</button>
                 </form>
@@ -370,74 +353,115 @@
 
 <script>
 
-    async function crearRecurso(tipo, cantidad) {
-        const recurso = {
-            nombreRecurso: tipo,
-            cantidadDisponible: cantidad
-        };
+    async function cargarZonasRecursosEquipos() {
+        try {
+            // ================= ZONAS =================
+            const resZonas = await fetch("http://localhost:8080/zonas");
+            const dataZonas = await resZonas.json();
+            const selectZonaRecurso = document.getElementById("zonaRecurso");
+            const selectZonaEquipo = document.getElementById("zonaEquipo");
+            selectZonaRecurso.innerHTML = "";
+            selectZonaEquipo.innerHTML = "";
 
-        const res = await fetch("http://localhost:8080/recurso", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(recurso)
-        });
+            dataZonas.lista.forEach(zona => {
+                const opt1 = document.createElement("option");
+                opt1.value = zona.id;
+                opt1.textContent = zona.nombreZona;
+                selectZonaRecurso.appendChild(opt1);
 
-        if (!res.ok) {
-            alert("Error creando recurso");
-            return null;
+                const opt2 = document.createElement("option");
+                opt2.value = zona.id;
+                opt2.textContent = zona.nombreZona;
+                selectZonaEquipo.appendChild(opt2);
+            });
+
+            // ================= RECURSOS =================
+            const resRecursos = await fetch("http://localhost:8080/recursos");
+            const dataRecursos = await resRecursos.json();
+            const selectTipoRecurso = document.getElementById("tipoRecurso");
+            selectTipoRecurso.innerHTML = "";
+
+            dataRecursos.lista.forEach(recurso => {
+                const opt = document.createElement("option");
+                opt.value = recurso.id;
+                opt.textContent = recurso.nombre + " (" + recurso.tipo + ")";
+                selectTipoRecurso.appendChild(opt);
+            });
+
+            // ================= EQUIPOS =================
+            const resEquipos = await fetch("http://localhost:8080/equipos");
+            const dataEquipos = await resEquipos.json();
+            const selectTipoEquipo = document.getElementById("tipoEquipo");
+            selectTipoEquipo.innerHTML = "";
+
+            dataEquipos.lista.forEach(equipo => {
+                const opt = document.createElement("option");
+                opt.value = equipo.id;
+                opt.textContent = equipo.tipo + " (" + equipo.cantidadMiembros + " miembros)";
+                selectTipoEquipo.appendChild(opt);
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("Error cargando zonas, recursos o equipos desde el servidor");
         }
-
-        return await res.json();
     }
 
-        async function asignarRecurso() {
+    // Ejecutar al inicio de la página
+    cargarZonasRecursosEquipos();
 
-        const tipo = document.getElementById('tipoRecurso').value;
-        const cantidad = document.getElementById('cantidadRecurso').value;
-        const zona = document.getElementById('zonaRecurso').value;
 
-        if (!cantidad) {
-        alert("Ingrese una cantidad válida");
-        return;
-    }
+    async function asignarRecurso() {
+        const recursoId = document.getElementById('tipoRecurso').value;
+        const zonaId = document.getElementById('zonaRecurso').value;
 
         try {
-        // 1. Obtener ID del recurso según tipo
-        const recursos = await fetch("http://localhost:8080/recurso").then(r => r.json());
+            const response = await fetch(
+                `http://localhost:8080/arbol/asignar?zonaId=${zonaId}&recursoId=${recursoId}`,
+                { method: "POST" }
+            );
 
-        let recursoEncontrado = null;
+            if (!response.ok) {
+                const text = await response.text();
+                alert("Error al asignar recurso: " + text);
+                return;
+            }
 
-        for (let nodo of recursos.lista) {
-        if (nodo.valor.tipoRecurso === tipo) {
-        recursoEncontrado = nodo.valor;
-        break;
+            alert("Recurso asignado correctamente!");
+
+        } catch (error) {
+            console.error(error);
+            alert("Error conectando con el servidor");
+        }
     }
-    }
+    async function asignarEquipo() {
+        const equipoId = document.getElementById('tipoEquipo').value;
+        const zonaId = document.getElementById('zonaEquipo').value;
+        const cantidadMiembros = document.getElementById('cantidadMiembros').value;
 
-        if (!recursoEncontrado) {
-        alert("No existe ese recurso en la base de datos");
-        return;
-    }
+        if (!cantidadMiembros || cantidadMiembros <= 0) {
+            alert("Ingrese una cantidad válida de miembros");
+            return;
+        }
 
-        // 2. Asignar recurso a la zona
-        const response = await fetch(
-        "http://localhost:8080/arbol/asignar?zonaId=" + zona + "&recursoId=" + recursoEncontrado.idRecurso,
-    {
-        method: "POST"
-    }
-        );
+        try {
+            const response = await fetch(
+                `http://localhost:8080/equipos/asignar?zonaId=${zonaId}&equipoId=${equipoId}&cantidadMiembros=${cantidadMiembros}`,
+                { method: "POST" }
+            );
 
-        if (!response.ok) {
-        alert("Error al asignar recurso");
-        return;
-    }
+            const text = await response.text();
+            if (!response.ok) {
+                alert("Error asignando equipo: " + text);
+                return;
+            }
 
-        alert("Recurso asignado correctamente!");
+            alert(text);
 
-    } catch (error) {
-        console.log(error);
-        alert("Error conectando con el servidor");
-    }
+        } catch (error) {
+            console.error(error);
+            alert("Error conectando con el servidor");
+        }
     }
 </script>
 </body>

@@ -15,23 +15,19 @@ import java.io.Serializable;
 public class Equipo implements Comparable<Equipo>{
 
     @Id
-    private int cantidadMiembros;
+    private String id;
     private TipoEquipoRescate tipo;
+    private int cantidadMiembros;
     private String zonaAsignada;
 
     @Override
     public int compareTo(Equipo otro) {
         if (otro == null) return 1;
 
-        // 1. Comparar por cantidad de miembros
-        int comparacion = Integer.compare(this.cantidadMiembros, otro.cantidadMiembros);
+        int compare = Integer.compare(this.cantidadMiembros, otro.cantidadMiembros);
+        if (compare != 0) return compare;
 
-        // 2. Si son iguales, comparar por tipo
-        if (comparacion == 0) {
-            comparacion = this.tipo.compareTo(otro.tipo);
-        }
-
-        return comparacion;
+        return this.id.compareTo(otro.id); // desempate
     }
 
 
