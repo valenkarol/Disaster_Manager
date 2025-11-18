@@ -14,6 +14,10 @@ public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>
         tamaño=0;
     }
 
+    public NodoLS<T> getPrimero() {
+        return primero;
+    }
+
     // metodo para agregar al inicio
     public void agregarPrimero(NodoLS<T> newNodo){
         if (primero==null){

@@ -14,6 +14,7 @@ public class Evacuacion implements Comparable<Evacuacion>{
 
     @Id
     private String id;
+    private Zona zona;
     private int numeroAfectados;
     private int prioridad;
 

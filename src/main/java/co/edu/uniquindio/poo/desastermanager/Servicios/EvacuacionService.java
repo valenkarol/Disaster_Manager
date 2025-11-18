@@ -5,7 +5,9 @@ import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ColaPrior
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Modelo.Evacuacion;
+import co.edu.uniquindio.poo.desastermanager.Modelo.Zona;
 import co.edu.uniquindio.poo.desastermanager.Repositorio.EvacuacionRepository;
+import co.edu.uniquindio.poo.desastermanager.Repositorio.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,27 @@ public class EvacuacionService {
     @Autowired
     private EvacuacionRepository evacuacionRepository;
 
+    @Autowired
+    private ZonaRepository zonaRepository;
+
+
     private ColaPrioridad<Evacuacion> colaPrioridad = new ColaPrioridad<>();
 
     public Evacuacion crearEvacuacion(Evacuacion nuevaEvacuacion) {
+
+        // Validar que venga zona en el JSON
+        if (nuevaEvacuacion.getZona() == null || nuevaEvacuacion.getZona().getId() == null) {
+            throw new RuntimeException("La zona de evacuación no fue enviada correctamente.");
+        }
+
+        // Buscar la zona real en la BD
+        Zona zonaReal = zonaRepository.findById(nuevaEvacuacion.getZona().getId())
+                .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
+
+        // Reemplazar la zona "vacía" con la real
+        nuevaEvacuacion.setZona(zonaReal);
+
+        // Guardar la evacuación completa con la zona REAL
         Evacuacion ev = evacuacionRepository.save(nuevaEvacuacion);
 
         // Insertar en la cola de prioridad PROPIA
@@ -27,6 +47,7 @@ public class EvacuacionService {
 
         return ev;
     }
+
 
     public Evacuacion procesarEvacuacion() {
         return colaPrioridad.extraer(); // Saca la más prioritaria

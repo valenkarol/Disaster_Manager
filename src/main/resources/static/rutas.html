@@ -413,10 +413,11 @@
                     <div class="form-group">
                         <label>Zona a Evacuar</label>
                         <select id="zonaEvacuar">
-                            <option>Zona Centro</option>
-                            <option>Zona Norte</option>
-                            <option>Zona Sur</option>
+                            <option value="zona_centro">Zona Centro</option>
+                            <option value="zona_norte">Zona Norte</option>
+                            <option value="zona_sur">Zona Sur</option>
                         </select>
+
                     </div>
                     <div class="form-group">
                         <label>Número de Afectados</label>
@@ -476,27 +477,35 @@
 
 <script>
     async function programarEvacuacion() {
-        const zona = document.getElementById('zonaEvacuar').value;
+        const zonaId = document.getElementById('zonaEvacuar').value;
         const numAfectados = parseInt(document.getElementById('numAfectados').value);
-        const prioridad = document.getElementById('prioridadEvac').value;
+        const prioridadTexto = document.getElementById('prioridadEvac').value;
 
-        if (!numAfectados || !zona || !prioridad) {
+        if (!numAfectados || !zonaId || !prioridadTexto) {
             alert('Por favor complete todos los campos');
             return;
         }
+
+        // Convertir prioridad en número
+        let prioridad = 1;
+        if (prioridadTexto.includes("Alta")) prioridad = 3;
+        else if (prioridadTexto.includes("Media")) prioridad = 2;
 
         try {
             const response = await fetch("http://localhost:8080/evacuaciones", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    zona,
+                    zona: { id: zonaId },  // <<<<<< CORRECTO
                     numeroAfectados: numAfectados,
-                    prioridad
+                    prioridad: prioridad
                 })
             });
 
-            if (!response.ok) throw new Error("Error al programar evacuación");
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error("Error al programar evacuación\n" + text);
+            }
 
             alert("Evacuación programada correctamente");
 
@@ -506,8 +515,9 @@
     }
 
     document.getElementById("btnProgramarEvacuacion")
-        .addEventListener("click", programarEvacuacion);
+        .onclick = programarEvacuacion;
 </script>
+
 
 
 <script>
@@ -535,6 +545,109 @@
     }
 
     cargarRutasActivas();
+</script>
+
+<script>
+    document.getElementById("btnProgramarEvacuacion").addEventListener("click", async () => {
+
+        const zonaId = document.getElementById("zonaEvacuar").value;
+        const numeroAfectados = parseInt(document.getElementById("numAfectados").value);
+        const prioridadTexto = document.getElementById("prioridadEvac").value;
+
+        let prioridad = 1;
+        if (prioridadTexto.includes("Alta")) prioridad = 3;
+        else if (prioridadTexto.includes("Media")) prioridad = 2;
+
+        // *** ESTA ES LA PARTE CRÍTICA ***
+        const evacuacion = {
+            zona: { id: zonaId },  // <<<<<<<<<<<<<<<<<<<<<<<<
+            numeroAfectados,
+            prioridad
+        };
+
+        const response = await fetch("http://localhost:8080/evacuaciones", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(evacuacion)
+        });
+
+        if (response.ok) {
+            alert("Evacuación programada exitosamente.");
+            cargarEvacuacionesPendientes();
+        } else {
+            const err = await response.text();
+            alert("ERROR: " + err);
+        }
+    });
+
+</script>
+
+<div id="listaEvacuaciones"></div>
+<button id="btnProcesar">Procesar evacuación</button>
+<div id="evacuacionProcesada"></div>
+
+<script>
+    async function cargarEvacuacionesPendientes() {
+        try {
+            const res = await fetch("http://localhost:8080/evacuaciones");
+            const lista = await res.json();
+
+            let html = "";
+
+            if (!lista || lista.length === 0) {
+                document.getElementById("listaEvacuaciones").innerHTML =
+                    "<p>No hay evacuaciones pendientes.</p>";
+                return;
+            }
+
+            for (const ev of lista) {
+                html += `
+                <div class="ev-item">
+                    <p><strong>Zona:</strong> ${ev.zona.nombreZona}</p>
+                    <p><strong>Riesgo:</strong> ${ev.zona.nivelRiesgo}</p>
+                    <p><strong>Afectados:</strong> ${ev.numeroAfectados}</p>
+                    <p><strong>Prioridad:</strong> ${ev.prioridad}</p>
+                    <hr>
+                </div>
+            `;
+            }
+
+            document.getElementById("listaEvacuaciones").innerHTML = html;
+        } catch (error) {
+            console.error("Error cargando evacuaciones:", error);
+            document.getElementById("listaEvacuaciones").innerHTML =
+                "<p>Error al cargar evacuaciones.</p>";
+        }
+    }
+
+    document.getElementById("btnProcesar").addEventListener("click", async () => {
+        try {
+            const res = await fetch("http://localhost:8080/evacuaciones/procesar");
+
+            if (res.status === 204) {
+                alert("No hay evacuaciones pendientes.");
+                return;
+            }
+
+            const ev = await res.json();
+
+            document.getElementById("evacuacionProcesada").innerHTML = `
+            <h4>Evacuación Procesada:</h4>
+            <p><strong>Zona:</strong> ${ev.zona.nombreZona}</p>
+            <p><strong>Afectados:</strong> ${ev.numeroAfectados}</p>
+            <p><strong>Prioridad:</strong> ${ev.prioridad}</p>
+        `;
+
+            // Actualizar la lista después de procesar
+            cargarEvacuacionesPendientes();
+        } catch (error) {
+            console.error("Error procesando evacuación:", error);
+            alert("Ocurrió un error al procesar la evacuación.");
+        }
+    });
+
+    // Cargar lista al inicializar la página
+    cargarEvacuacionesPendientes();
 </script>
 
 
