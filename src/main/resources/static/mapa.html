@@ -943,6 +943,62 @@
     } else {
         initMap();
     }
+    async function cargarDatosMapa() {
+        try {
+            const [resZonas, resUbicaciones, resRutas] = await Promise.all([
+                fetch('http://localhost:8080/mapa/zonas'),
+                fetch('http://localhost:8080/mapa/ubicaciones'),
+                fetch('http://localhost:8080/mapa/rutas')
+            ]);
+
+            const zonas = await resZonas.json();           // List<ZonaDTO>
+            const ubicaciones = await resUbicaciones.json(); // List<UbicacionDTO>
+            const rutas = await resRutas.json();           // List<RutaMapaDTO>
+
+            dibujarMapa(zonas, ubicaciones, rutas);
+        } catch (error) {
+            console.error("Error cargando datos del mapa:", error);
+        }
+    }
+
+    // Llamar al cargar la página
+    window.onload = cargarDatosMapa;
+
+    // Llama a la función cuando cargue la página
+    window.onload = cargarMapa;
+    function dibujarMapa(zonas, ubicaciones, rutas) {
+        // -----------------
+        // 1️⃣ Marcadores de ubicaciones
+        ubicaciones.forEach(u => {
+            const coords = u.coordenadas.split(',').map(Number);
+            L.marker([coords[0], coords[1]])
+                .bindPopup(`<b>Tipo:</b> ${u.tipoUbicacion}<br><b>ID:</b> ${u.id}`)
+                .addTo(map);
+        });
+
+        // -----------------
+        // 2️⃣ Zonas (círculos)
+        zonas.forEach(z => {
+            // Aquí puedes usar coordenadas de ejemplo o de la zona
+            L.circle([19.4326, -99.1332], { // reemplaza por coords reales si tienes
+                radius: z.nivelRiesgo * 1000,
+                color: 'red',
+                fillOpacity: 0.2
+            }).bindPopup(`<b>Zona:</b> ${z.nombreZona}<br><b>Riesgo:</b> ${z.nivelRiesgo}`)
+                .addTo(map);
+        });
+
+        // -----------------
+        // 3️⃣ Rutas
+        rutas.forEach(r => {
+            const origenCoords = r.origen.split(',').map(Number);
+            const destinoCoords = r.destino.split(',').map(Number);
+
+            L.polyline([origenCoords, destinoCoords], {color: 'blue'})
+                .bindPopup(`<b>Distancia:</b> ${r.distancia} km`)
+                .addTo(map);
+        });
+    }
 </script>
 </body>
 </html>

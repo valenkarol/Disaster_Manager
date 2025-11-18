@@ -1,9 +1,6 @@
 package co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>{
     private NodoLS<T> primero;
@@ -194,10 +191,19 @@ public class ListaSimpleEnlazada<T extends Comparable<T>> implements Iterable<T>
             }
         };
     }
-
-
     public int tamaño() {
         return tamaño;
+    }
+
+    // NUEVO MÉTODO
+    public List<T> toList() {
+        List<T> lista = new ArrayList<>();
+        NodoLS<T> nodo = primero;
+        while (nodo != null) {
+            lista.add(nodo.getDato());
+            nodo = nodo.getProximo();
+        }
+        return lista;
     }
 
 }
