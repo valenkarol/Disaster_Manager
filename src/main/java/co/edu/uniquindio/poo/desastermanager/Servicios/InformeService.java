@@ -62,4 +62,8 @@ public class InformeService {
         informe.setFecha(LocalDateTime.now());
         return informeRepository.save(informe);
     }
+    public boolean existeInforme(String id) {
+        return informeRepository.existsById(id);
+    }
+
 }
