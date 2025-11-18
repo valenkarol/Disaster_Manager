@@ -26,23 +26,20 @@ public class EvacuacionService {
     private ColaPrioridad<Evacuacion> colaPrioridad = new ColaPrioridad<>();
 
     public Evacuacion crearEvacuacion(Evacuacion nuevaEvacuacion) {
-
-        // Validar que venga zona en el JSON
         if (nuevaEvacuacion.getZona() == null || nuevaEvacuacion.getZona().getId() == null) {
             throw new RuntimeException("La zona de evacuación no fue enviada correctamente.");
         }
 
-        // Buscar la zona real en la BD
         Zona zonaReal = zonaRepository.findById(nuevaEvacuacion.getZona().getId())
                 .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
 
-        // Reemplazar la zona "vacía" con la real
         nuevaEvacuacion.setZona(zonaReal);
 
-        // Guardar la evacuación completa con la zona REAL
-        Evacuacion ev = evacuacionRepository.save(nuevaEvacuacion);
+        if (nuevaEvacuacion.getProcesada() == null) {
+            nuevaEvacuacion.setProcesada(false);
+        }
 
-        // Insertar en la cola de prioridad PROPIA
+        Evacuacion ev = evacuacionRepository.save(nuevaEvacuacion);
         colaPrioridad.insertar(ev);
 
         return ev;
@@ -94,4 +91,9 @@ public class EvacuacionService {
     public void eliminarEvacuacion(String id) {
         evacuacionRepository.deleteById(id);
     }
+
+    public boolean esProcesada(Evacuacion ev) {
+        return !colaPrioridad.contiene(ev);
+    }
+
 }

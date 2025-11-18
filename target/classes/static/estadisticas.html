@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas - Sistema de Gestión de Desastres</title>
+    <title>Sistema de Gestión de Desastres - Estadísticas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0d5ff 0%, #c4b5fd 100%);
+            background: linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 100%);
             min-height: 100vh;
         }
 
@@ -22,282 +23,60 @@
             color: white;
             padding: 1rem 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .header-title {
-            flex: 1;
-            text-align: center;
             font-size: 1.5rem;
             font-weight: bold;
         }
 
-        .search-container {
+        .search-box {
             position: relative;
-            width: 250px;
         }
 
-        .search-container input {
-            width: 100%;
-            padding: 0.5rem 2.5rem 0.5rem 1rem;
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
             border-radius: 8px;
             border: none;
+            width: 250px;
             font-size: 0.9rem;
         }
 
-        .search-btn {
+        .search-icon {
             position: absolute;
-            right: 0.5rem;
+            left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            background: #7c3aed;
-            border: none;
-            color: white;
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            cursor: pointer;
         }
 
-        .main-content {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #1f2937;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .page-subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #7c3aed;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .chart-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1f2937;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .tab-btn {
-            background: #e0d5ff;
-            border: none;
-            padding: 0.5rem 1rem;
+        .admin-badge {
+            background: #6d28d9;
+            padding: 0.4rem 1rem;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #5b21b6;
-            transition: all 0.3s;
-        }
-
-        .tab-btn.active {
-            background: #7c3aed;
-            color: white;
-        }
-
-        .chart-container {
-            width: 100%;
-            height: 300px;
-            position: relative;
-        }
-
-        .chart-description {
-            background: #f3f4f6;
-            border-left: 4px solid #7c3aed;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-        }
-
-        .description-title {
+            font-size: 0.85rem;
             font-weight: bold;
-            color: #7c3aed;
-            margin-bottom: 0.5rem;
         }
 
-        .timeline-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .timeline-item {
+        nav {
+            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+            padding: 15px;
             display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-            gap: 1rem;
+            gap: 10px;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
         }
 
-        .timeline-item:last-child {
-            border-bottom: none;
-        }
-
-        .timeline-date {
-            background: #e0d5ff;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: bold;
-            color: #5b21b6;
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .timeline-content {
-            flex: 1;
-            color: #4b5563;
-        }
-
-        .location-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .location-card {
-            background: white;
-            border: 2px solid #e0d5ff;
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .location-card:hover {
-            border-color: #7c3aed;
-            transform: scale(1.05);
-        }
-
-        .location-icon {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .location-label {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-top: 0.5rem;
-        }
-
-        .priority-high { color: #dc2626; }
-        .priority-medium { color: #f59e0b; }
-        .priority-low { color: #10b981; }
-
-        canvas {
-            max-width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-wrap: wrap;
-            }
-            .search-container {
-                width: 100%;
-                margin-top: 1rem;
-            }
-            .page-title {
-                font-size: 2rem;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-<script>
-    const rol = localStorage.getItem("rol");
-
-    if (!rol) {
-        window.location.href = "login.html";
-    }
-
-    if (rol !== "administrador") {
-        alert("No tienes permiso para acceder a este panel");
-        window.location.href = "index.html";
-    }
-</script>
-
-<nav style="background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%); padding: 15px; display: flex; gap: 10px; justify-content: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); flex-wrap: wrap;">
-    <style>
         .nav-button {
             background: transparent;
             color: white;
@@ -339,24 +118,209 @@
             background: #b91c1c;
             transform: translateY(-2px);
         }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .chart-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chart-btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .chart-btn-primary:hover {
+            background: #6d28d9;
+        }
+
+        .chart-btn-secondary {
+            background: #a78bfa;
+            color: white;
+        }
+
+        .chart-btn-secondary:hover {
+            background: #8b5cf6;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .description-box {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border-left: 4px solid #7c3aed;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .description-title {
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .description-text {
+            color: #374151;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .location-label {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #1f2937;
+            border: 2px solid #e9d5ff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .location-label:hover {
+            border-color: #7c3aed;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+        }
+
+        .location-icon {
+            font-size: 2.5rem;
+        }
+
+        .priority-high { color: #dc2626; }
+        .priority-medium { color: #f59e0b; }
+        .priority-low { color: #10b981; }
+        .priority-general { color: #7c3aed; }
+
+        .footer {
+            background: #6d28d9;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
+</head>
+<body>
+<script>
+    const rol = localStorage.getItem("rol");
+    if (!rol) {
+        alert("Debes iniciar sesión");
+        window.location.href = "login.html";
+    }
+</script>
 
-    <!-- Inicio -->
+<nav>
     <button class="nav-button" onclick="window.location.href='index.html'">🏠 Inicio</button>
-
-    <!-- Admin panel -->
     <button class="nav-button" onclick="window.location.href='admin.html'">⚙️ Administración</button>
-
-    <!-- Mapa -->
     <button class="nav-button" onclick="window.location.href='mapa.html'">🗺️ Mapa</button>
-
-    <!-- Rutas -->
     <button class="nav-button" onclick="window.location.href='rutas.html'">📍 Rutas</button>
-
-    <!-- Estadísticas -->
     <button class="nav-button active" onclick="window.location.href='estadisticas.html'">📊 Estadísticas</button>
-
-    <!-- Logout -->
     <button class="nav-button-logout" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
 </nav>
 
@@ -369,220 +333,297 @@
     }
 </script>
 
-
 <header class="header">
-    <button class="menu-btn">☰</button>
-    <div class="header-title">Sistema de Gestión de Desastres</div>
-    <div class="search-container">
-        <input type="text" placeholder="Buscar">
-        <button class="search-btn">🔍</button>
+    <div class="header-content">
+        <div class="header-title">⚠️ Sistema de Gestión de Desastres</div>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Buscar...">
+        </div>
+        <div class="admin-badge">ADMIN</div>
     </div>
 </header>
 
 <main class="main-content">
-    <h1 class="page-title">Estadísticas</h1>
-    <p class="page-subtitle">DD/MM/AA</p>
-
-    <!-- Tarjetas de Resumen -->
+    <!-- Tarjetas de Estadísticas -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">📦</div>
-            <div class="stat-value" id="totalRecursos">1,247</div>
+            <div class="stat-number" id="totalRecursos">1386</div>
             <div class="stat-label">Total Recursos Distribuidos</div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon">👥</div>
-            <div class="stat-value" id="personasEvacuadas">3,456</div>
+            <div class="stat-number" id="personasEvacuadas">3,456</div>
             <div class="stat-label">Personas Evacuadas</div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon">🚨</div>
-            <div class="stat-value" id="zonasActivas">12</div>
+            <div class="stat-number" id="zonasActivas">12</div>
             <div class="stat-label">Zonas Activas</div>
         </div>
+
         <div class="stat-card">
             <div class="stat-icon">👨‍⚕️</div>
-            <div class="stat-value" id="equiposDesplegados">8</div>
+            <div class="stat-number" id="equiposDesplegados">8</div>
             <div class="stat-label">Equipos Desplegados</div>
         </div>
     </div>
 
-    <!-- Gráfica Principal -->
-    <div class="chart-section">
-        <div class="section-header">
-            <h2 class="section-title">Gráfica</h2>
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="changeChart('recursos')">Recursos</button>
-                <button class="tab-btn" onclick="changeChart('evacuaciones')">Evacuaciones</button>
+    <!-- Contenedor de Gráfica -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <h2 class="chart-title">Gráfica</h2>
+            <div class="chart-buttons">
+                <button class="chart-btn chart-btn-primary">Recursos</button>
+                <button class="chart-btn chart-btn-secondary">Evacuaciones</button>
             </div>
         </div>
 
-        <div class="chart-container">
-            <canvas id="mainChart"></canvas>
-        </div>
+        <canvas id="myChart"></canvas>
 
-        <div class="chart-description">
-            <div class="description-title">Descripción:</div>
-            <p id="chartDescription">
-                En la gráfica se observa la relación de la distribución (cantidad) de los recursos
-                entre los diferentes ubicaciones, al igual que se puede evidenciar la cantidad de
-                personas evacuadas por ubicación.
-            </p>
-        </div>
-    </div>
 
-    <!-- Fechas Recientes -->
-    <div class="timeline-section">
-        <h2 class="section-title">Fechas recientes</h2>
-        <div class="timeline-item">
-            <div class="timeline-date">📅 15/11/2025</div>
-            <div class="timeline-content">Distribución masiva de medicinas en Zona Norte - 450 unidades</div>
-        </div>
-        <div class="timeline-item">
-            <div class="timeline-date">📅 14/11/2025</div>
-            <div class="timeline-content">Evacuación completada en Zona Centro - 1,200 personas</div>
-        </div>
-        <div class="timeline-item">
-            <div class="timeline-date">📅 13/11/2025</div>
-            <div class="timeline-content">Despliegue de equipos médicos en 3 ubicaciones</div>
+        <!-- Descripción -->
+        <div class="description-box">
+            <div class="description-title">📊 Descripción</div>
+            <div class="description-text">
+                En la gráfica se observa la relación de la distribución (cantidad) de los recursos entre los diferentes ubicaciones, al igual que se puede evidenciar la cantidad de personas evacuadas por ubicación.
+            </div>
         </div>
     </div>
 
     <!-- Opciones de Ubicaciones -->
-    <div class="chart-section">
-        <h2 class="section-title">Opciones de ubicaciones</h2>
-        <div class="location-grid">
-            <div class="location-card" onclick="filterByLocation('high')">
+    <div class="chart-container" style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin-bottom: 2rem;">
+        <h2 class="chart-title" style="margin-bottom: 1.5rem;">📍 Opciones de Ubicaciones</h2>
+        <div class="locations-grid">
+            <div class="location-label" data-prioridad="alta">
                 <div class="location-icon priority-high">📍</div>
-                <div class="stat-label">Prioridad alta</div>
+                <div>Prioridad Alta</div>
             </div>
-            <div class="location-card" onclick="filterByLocation('medium')">
+            <div class="location-label" data-prioridad="media">
                 <div class="location-icon priority-medium">📍</div>
-                <div class="stat-label">Prioridad media</div>
+                <div>Prioridad Media</div>
             </div>
-            <div class="location-card" onclick="filterByLocation('low')">
+            <div class="location-label" data-prioridad="baja">
                 <div class="location-icon priority-low">📍</div>
-                <div class="stat-label">Prioridad baja</div>
+                <div>Prioridad Baja</div>
             </div>
-            <div class="location-card" onclick="filterByLocation('all')">
-                <div class="location-icon">🗺️</div>
-                <div class="stat-label">Ubicación general</div>
+            <div class="location-label" data-prioridad="todas">
+                <div class="location-icon priority-general">🗺️</div>
+                <div>Ubicación General</div>
             </div>
         </div>
     </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<footer class="footer">
+    <p>Sistema de Gestión de Desastres Naturales © 2025</p>
+    <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.8;">Karol M Davila y Valentina Gutierrez</p>
+</footer>
+
 <script>
-    // Datos de ejemplo
-    const recursosData = {
-        labels: ['Ubicación 1', 'Ubicación 2', 'Ubicación 3', 'Ubicación 4', 'Ubicación 5'],
-        datasets: [
-            {
+    // Configuración de la gráfica
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Ubicación 1', 'Ubicación 2', 'Ubicación 3', 'Ubicación 4', 'Ubicación 5'],
+            datasets: [{
                 label: 'Recursos',
-                data: [20, 35, 30, 45, 28],
+                data: [22, 28, 35, 33, 45],
                 borderColor: '#8b5cf6',
                 backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                tension: 0.4
+                tension: 0.4,
+                borderWidth: 3,
+                fill: true
             },
-            {
-                label: 'Personas/Demanda',
-                data: [18, 28, 40, 35, 25],
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                tension: 0.4
-            }
-        ]
-    };
-
-    const evacuacionesData = {
-        labels: ['Ubicación 1', 'Ubicación 2', 'Ubicación 3', 'Ubicación 4', 'Ubicación 5'],
-        datasets: [
-            {
-                label: 'Evacuados',
-                data: [450, 680, 520, 890, 340],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4
+                {
+                    label: 'Personas/Demanda',
+                    data: [18, 25, 30, 38, 40],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 3,
+                    fill: true
+                }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
             },
-            {
-                label: 'Pendientes',
-                data: [120, 240, 180, 150, 90],
-                borderColor: '#dc2626',
-                backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                tension: 0.4
-            }
-        ]
-    };
-
-    let currentChart;
-    let currentDataset = 'recursos';
-
-    function initChart() {
-        const ctx = document.getElementById('mainChart').getContext('2d');
-        currentChart = new Chart(ctx, {
-            type: 'line',
-            data: recursosData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 50,
+                    grid: {
+                        color: '#f3f4f6'
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: '#e5e7eb'
-                        }
+                x: {
+                    grid: {
+                        display: false
                     },
-                    x: {
-                        grid: {
-                            color: '#e5e7eb'
+                    ticks: {
+                        font: {
+                            size: 11
                         }
                     }
                 }
             }
-        });
-    }
-
-    function changeChart(type) {
-        // Actualizar botones activos
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
-
-        // Cambiar datos del gráfico
-        if (type === 'recursos') {
-            currentChart.data = recursosData;
-            document.getElementById('chartDescription').textContent =
-                'En la gráfica se observa la relación de la distribución (cantidad) de los recursos entre los diferentes ubicaciones, al igual que se puede evidenciar la cantidad de personas evacuadas por ubicación.';
-        } else {
-            currentChart.data = evacuacionesData;
-            document.getElementById('chartDescription').textContent =
-                'Esta gráfica muestra el progreso de las evacuaciones en cada ubicación, comparando las personas ya evacuadas con las que aún están pendientes de evacuación.';
         }
-        currentChart.update();
-    }
+    });
 
     function filterByLocation(priority) {
-        alert('Filtrando ubicaciones por prioridad: ' + priority);
+        const messages = {
+            'high': 'Mostrando ubicaciones con Prioridad Alta 🔴',
+            'medium': 'Mostrando ubicaciones con Prioridad Media 🟡',
+            'low': 'Mostrando ubicaciones con Prioridad Baja 🟢',
+            'all': 'Mostrando todas las ubicaciones 🗺️'
+        };
+        alert(messages[priority] || 'Filtrando ubicaciones...');
         // Aquí conectarías con tu backend para filtrar datos
     }
-
-    // Inicializar gráfico al cargar
-    window.addEventListener('load', initChart);
-
-    // Simular actualización de datos en tiempo real
-    setInterval(() => {
-        const totalRecursos = document.getElementById('totalRecursos');
-        const currentValue = parseInt(totalRecursos.textContent.replace(',', ''));
-        totalRecursos.textContent = (currentValue + Math.floor(Math.random() * 10)).toLocaleString();
-    }, 5000);
 </script>
+
+
+
+<script>
+    window.onload = function() {
+        // Variables globales
+        let tipoGrafica = 'recursos'; // 'recursos' o 'evacuaciones'
+        let nivelPrioridad = 'todas'; // 'alta', 'media', 'baja', 'todas'
+        let myChart = null;
+
+        // Función para cerrar sesión
+        window.cerrarSesion = function() {
+            if (confirm('¿Está seguro que desea cerrar sesión?')) {
+                alert('Sesión cerrada exitosamente');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Función principal para cargar estadísticas
+        async function cargarEstadisticas() {
+            try {
+                const url = nivelPrioridad === 'todas'
+                    ? "http://localhost:8080/estadisticas"
+                    : `http://localhost:8080/estadisticas/prioridad/${nivelPrioridad}`;
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                console.log("Datos recibidos:", data);
+
+                // Actualizar tarjetas de resumen
+                let totalRecursos = 0, totalEvacuados = 0, zonasActivas = 0, equiposDesplegados = 0;
+                data.forEach(est => {
+                    totalRecursos += est.recursosDisponibles;
+                    totalEvacuados += est.personasEvacuadas;
+                    if (est.totalPersonas > 0) zonasActivas++;
+                    equiposDesplegados += 1;
+                });
+
+                document.getElementById("totalRecursos").innerText = totalRecursos;
+                document.getElementById("personasEvacuadas").innerText = totalEvacuados;
+                document.getElementById("zonasActivas").innerText = zonasActivas;
+                document.getElementById("equiposDesplegados").innerText = equiposDesplegados;
+
+                // Preparar datos para la gráfica
+                const labels = data.map(est => est.zona.nombreZona);
+                const recursos = data.map(est => est.recursosDisponibles);
+                const personasEvacuadas = data.map(est => est.personasEvacuadas);
+                const personasPendientes = data.map(est => est.personasPendientes);
+
+                // Configurar datasets según tipo de gráfica
+                const datasets = tipoGrafica === 'recursos'
+                    ? [{
+                        label: 'Recursos',
+                        data: recursos,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        fill: true
+                    }]
+                    : [{
+                        label: 'Personas Totales (Evacuadas + Pendientes)',
+                        data: personasEvacuadas.map((ev, i) => ev + personasPendientes[i]),
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        fill: true
+                    }];
+
+                // Crear o actualizar gráfico
+                const ctx = document.getElementById('myChart').getContext('2d');
+                if (myChart) {
+                    myChart.data.labels = labels;
+                    myChart.data.datasets = datasets;
+                    myChart.update();
+                } else {
+                    myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: { labels: labels, datasets: datasets },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'top' } },
+                            scales: { y: { beginAtZero: true }, x: {} }
+                        }
+                    });
+                }
+
+            } catch (err) {
+                console.error("Error cargando estadísticas:", err);
+                alert("No se pudieron cargar los datos. Verifica que el backend esté corriendo y que CORS esté habilitado.");
+            }
+        }
+
+        // Botones de prioridad
+        document.querySelectorAll('.location-label').forEach(btn => {
+            btn.addEventListener('click', () => {
+                nivelPrioridad = btn.getAttribute('data-prioridad');
+                cargarEstadisticas();
+            });
+        });
+
+        // Botones de tipo de gráfica
+        document.querySelector('.chart-btn-primary').addEventListener('click', () => {
+            tipoGrafica = 'recursos';
+            cargarEstadisticas();
+        });
+        document.querySelector('.chart-btn-secondary').addEventListener('click', () => {
+            tipoGrafica = 'evacuaciones';
+            cargarEstadisticas();
+        });
+
+        // Cargar estadísticas al inicio
+        cargarEstadisticas();
+    }
+</script>
+
+
+
+
 </body>
 </html>

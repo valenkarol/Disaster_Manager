@@ -63,4 +63,17 @@ public class ColaPrioridad<T extends Comparable<T>> {
     public int tamaño() {
         return lista.tamaño();
     }
+
+    // -------------------------------
+// VERIFICAR SI CONTIENE UN ELEMENTO
+// -------------------------------
+    public boolean contiene(T elemento) {
+        for (T actual : lista) {
+            if (actual.equals(elemento)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

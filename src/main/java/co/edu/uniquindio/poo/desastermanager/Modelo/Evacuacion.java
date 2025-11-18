@@ -17,7 +17,7 @@ public class Evacuacion implements Comparable<Evacuacion>{
     private Zona zona;
     private int numeroAfectados;
     private int prioridad;
-
+    private Boolean procesada = false; // nuevo campo, por defecto false
     @Override
     public int compareTo(Evacuacion otra) {
         if (otra == null) return 1;
@@ -35,7 +35,7 @@ public class Evacuacion implements Comparable<Evacuacion>{
             comparacion = this.id.compareTo(otra.id);
         }
 
-        return comparacion;
+        return Integer.compare(otra.prioridad, this.prioridad);
     }
 
 }
