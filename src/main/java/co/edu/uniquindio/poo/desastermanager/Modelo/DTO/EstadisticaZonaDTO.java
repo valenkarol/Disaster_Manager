@@ -1,4 +1,4 @@
-package co.edu.uniquindio.poo.desastermanager.Modelo;
+package co.edu.uniquindio.poo.desastermanager.Modelo.DTO;
 
 
 public class EstadisticaZonaDTO {
