@@ -566,222 +566,52 @@
     let routeLines = [];
     let showingRoutes = true;
 
-    // Coordenadas reales de Armenia, Quindío, Colombia
-    const locations = [
-        {
-            id: 1,
-            name: "Centro Armenia",
-            address: "Carrera 14 con Calle 21, Centro",
-            lat: 4.5339,
-            lng: -75.6811,
-            priority: "high",
-            type: "CIUDAD",
-            resources: 120,
-            evacuados: 450,
-            equipos: 3,
-            nivelRiesgo: 9
-        },
-        {
-            id: 2,
-            name: "Parque de la Vida",
-            address: "Zona Norte Armenia",
-            lat: 4.5489,
-            lng: -75.6711,
-            priority: "medium",
-            type: "REFUGIO",
-            resources: 85,
-            evacuados: 280,
-            equipos: 2,
-            nivelRiesgo: 6
-        },
-        {
-            id: 3,
-            name: "Estación de Bomberos",
-            address: "Av. Bolívar Sur",
-            lat: 4.5189,
-            lng: -75.6911,
-            priority: "low",
-            type: "CENTRO DE AYUDA",
-            resources: 200,
-            evacuados: 150,
-            equipos: 4,
-            nivelRiesgo: 3
-        },
-        {
-            id: 4,
-            name: "Zona Industrial",
-            address: "Sector Oriental Armenia",
-            lat: 4.5339,
-            lng: -75.6611,
-            priority: "high",
-            type: "CIUDAD",
-            resources: 95,
-            evacuados: 520,
-            equipos: 3,
-            nivelRiesgo: 8
-        },
-        {
-            id: 5,
-            name: "Hospital San Juan de Dios",
-            address: "Calle 12 con Carrera 15",
-            lat: 4.5289,
-            lng: -75.6761,
-            priority: "medium",
-            type: "REFUGIO",
-            resources: 150,
-            evacuados: 320,
-            equipos: 2,
-            nivelRiesgo: 5
-        },
-        {
-            id: 6,
-            name: "Universidad del Quindío",
-            address: "Av. Bolívar Norte",
-            lat: 4.5589,
-            lng: -75.6911,
-            priority: "medium",
-            type: "REFUGIO",
-            resources: 180,
-            evacuados: 600,
-            equipos: 5,
-            nivelRiesgo: 4
-        },
-        {
-            id: 7,
-            name: "Terminal de Transportes",
-            address: "Calle 35 con Carrera 20",
-            lat: 4.5139,
-            lng: -75.6661,
-            priority: "high",
-            type: "CIUDAD",
-            resources: 110,
-            evacuados: 380,
-            equipos: 3,
-            nivelRiesgo: 7
-        }
-    ];
-
-    // Rutas reales entre ubicaciones
-    const routes = [
-        { from: 0, to: 1, distance: 2.5, status: "disponible" },
-        { from: 1, to: 5, distance: 3.2, status: "disponible" },
-        { from: 0, to: 4, distance: 1.8, status: "disponible" },
-        { from: 4, to: 3, distance: 2.1, status: "bloqueada" },
-        { from: 0, to: 2, distance: 3.5, status: "disponible" },
-        { from: 2, to: 6, distance: 4.2, status: "disponible" },
-        { from: 3, to: 6, distance: 3.8, status: "bloqueada" },
-        { from: 1, to: 3, distance: 2.9, status: "disponible" }
-    ];
-
-    // Inicializar mapa
     function initMap() {
-        // Crear mapa centrado en Armenia, Quindío
-        map = L.map('map', {
-            center: [4.5339, -75.6811],
-            zoom: 14,
-            zoomControl: false,
-            minZoom: 12,
-            maxZoom: 18
-        });
+        map = L.map("map").setView([4.5339, -75.6811], 13);
 
-        // Capa base de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
         }).addTo(map);
 
-        // Agregar ubicaciones y rutas
-        addLocations();
-        addRoutes();
-        populateSidebar();
-
-        console.log('Mapa inicializado correctamente');
+        // Controles de zoom si quieres
     }
 
-    // Agregar ubicaciones al mapa
-    function addLocations() {
-        locations.forEach((location, index) => {
-            // Crear icono personalizado
-            const iconHtml = `<div class="marker-pin marker-${location.priority}">${location.id}</div>`;
+    // Llamar al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+        initMap();
+        cargarDatosMapa();
+    });
 
-            const customIcon = L.divIcon({
-                className: 'custom-div-icon',
-                html: iconHtml,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15],
-                popupAnchor: [0, -15]
-            });
 
-            // Crear marcador
-            const marker = L.marker([location.lat, location.lng], {
-                icon: customIcon,
-                title: location.name
-            }).addTo(map);
+    async function cargarDatosMapa() {
+        try {
+            const [resZonas, resUbicaciones, resRutas] = await Promise.all([
+                fetch("http://localhost:8080/mapa/zonas"),
+                fetch("http://localhost:8080/mapa/ubicaciones"),
+                fetch("http://localhost:8080/mapa/rutas")
+            ]);
 
-            // Contenido del popup
-            const popupContent = `
-                    <div style="padding: 10px; min-width: 200px;">
-                        <h3 style="color: #7c3aed; margin: 0 0 10px 0; font-size: 1.1em;">${location.name}</h3>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Dirección:</strong> ${location.address}</p>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Tipo:</strong> ${location.type}</p>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Riesgo:</strong> ${location.nivelRiesgo}/10</p>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Recursos:</strong> ${location.resources} unidades</p>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Evacuados:</strong> ${location.evacuados} personas</p>
-                        <p style="margin: 5px 0; font-size: 0.9em;"><strong>Equipos:</strong> ${location.equipos} equipos</p>
-                    </div>
-                `;
+            if (!resZonas.ok || !resUbicaciones.ok || !resRutas.ok) {
+                console.error('Error en alguna respuesta del backend', resZonas, resUbicaciones, resRutas);
+                return;
+            }
 
-            marker.bindPopup(popupContent);
+            const zonas = await resZonas.json();           // List<ZonaMapaDTO>
+            const ubicaciones = await resUbicaciones.json(); // List<UbicacionMapaDTO>
+            const rutas = await resRutas.json();           // List<RutaMapaResponseDTO>
 
-            // Evento click
-            marker.on('click', () => {
-                showLocationInfo(index);
-            });
+            // Limpiar capas previas
+            markers.forEach(m => map.removeLayer(m));
+            routeLines.forEach(l => map.removeLayer(l));
+            markers = [];
+            routeLines = [];
 
-            markers.push(marker);
-        });
-
-        console.log(`${locations.length} ubicaciones agregadas al mapa`);
+            dibujarMapa(zonas, ubicaciones, rutas);
+            llenarPanelUbicaciones(ubicaciones);
+        } catch (error) {
+            console.error("❌ Error cargando datos del mapa:", error);
+        }
     }
-
-    // Agregar rutas al mapa
-    function addRoutes() {
-        routes.forEach(route => {
-            const from = locations[route.from];
-            const to = locations[route.to];
-
-            const color = route.status === "disponible" ? '#3b82f6' : '#dc2626';
-            const dashArray = route.status === "disponible" ? null : '10, 10';
-
-            const polyline = L.polyline(
-                [[from.lat, from.lng], [to.lat, to.lng]],
-                {
-                    color: color,
-                    weight: 4,
-                    opacity: 0.7,
-                    dashArray: dashArray
-                }
-            ).addTo(map);
-
-            // Popup para rutas
-            polyline.bindPopup(`
-                    <div style="padding: 10px;">
-                        <h4 style="margin: 0 0 10px 0;">🛣️ Ruta de Transporte</h4>
-                        <p style="margin: 5px 0;"><strong>Desde:</strong> ${from.name}</p>
-                        <p style="margin: 5px 0;"><strong>Hasta:</strong> ${to.name}</p>
-                        <p style="margin: 5px 0;"><strong>Distancia:</strong> ${route.distance} km</p>
-                        <p style="margin: 5px 0;"><strong>Estado:</strong>
-                            <span style="color: ${color}; font-weight: bold;">${route.status.toUpperCase()}</span>
-                        </p>
-                    </div>
-                `);
-
-            routeLines.push(polyline);
-        });
-
-        console.log(`${routes.length} rutas agregadas al mapa`);
-    }
-
     // Poblar sidebar
     function populateSidebar() {
         const container = document.getElementById('locationsList');
@@ -943,62 +773,134 @@
     } else {
         initMap();
     }
-    async function cargarDatosMapa() {
-        try {
-            const [resZonas, resUbicaciones, resRutas] = await Promise.all([
-                fetch('http://localhost:8080/mapa/zonas'),
-                fetch('http://localhost:8080/mapa/ubicaciones'),
-                fetch('http://localhost:8080/mapa/rutas')
-            ]);
 
-            const zonas = await resZonas.json();           // List<ZonaDTO>
-            const ubicaciones = await resUbicaciones.json(); // List<UbicacionDTO>
-            const rutas = await resRutas.json();           // List<RutaMapaDTO>
 
-            dibujarMapa(zonas, ubicaciones, rutas);
-        } catch (error) {
-            console.error("Error cargando datos del mapa:", error);
-        }
-    }
-
-    // Llamar al cargar la página
-    window.onload = cargarDatosMapa;
 
     // Llama a la función cuando cargue la página
-    window.onload = cargarMapa;
+    function getColorByPriority(p) {
+        if (!p) return "green";
+        p = p.toLowerCase();
+        if (p === "high") return "red";
+        if (p === "medium") return "orange";
+        return "green";
+    }
+
     function dibujarMapa(zonas, ubicaciones, rutas) {
-        // -----------------
-        // 1️⃣ Marcadores de ubicaciones
+
+        // 1️⃣ Dibujar ubicaciones
         ubicaciones.forEach(u => {
-            const coords = u.coordenadas.split(',').map(Number);
-            L.marker([coords[0], coords[1]])
-                .bindPopup(`<b>Tipo:</b> ${u.tipoUbicacion}<br><b>ID:</b> ${u.id}`)
-                .addTo(map);
+            if (!u.coordenadas) return;
+            const coords = u.coordenadas.split(",").map(Number);
+            if (coords.length !== 2 || isNaN(coords[0]) || isNaN(coords[1])) return;
+
+            const marker = L.circleMarker(coords, {
+                radius: 8,
+                color: getColorByPriority(u.prioridad),
+                fillColor: getColorByPriority(u.prioridad),
+                fillOpacity: 0.9
+            }).addTo(map);
+
+            marker.bindPopup(`
+            <b>${u.nombre}</b><br>
+            Dirección: ${u.direccion || '-'}<br>
+            Tipo: ${u.tipoUbicacion || '-'}<br>
+            Prioridad: ${u.prioridad || '-'}<br>
+            Riesgo: ${u.nivelRiesgo || '-'} / 10<br>
+            Recursos: ${u.recursos || 0}<br>
+            Evacuados: ${u.evacuados || 0}<br>
+            Equipos: ${u.equipos || 0}
+        `);
+
+            markers.push(marker);
         });
 
-        // -----------------
-        // 2️⃣ Zonas (círculos)
+        // 2️⃣ Dibujar zonas (si vienen coordenadas)
         zonas.forEach(z => {
-            // Aquí puedes usar coordenadas de ejemplo o de la zona
-            L.circle([19.4326, -99.1332], { // reemplaza por coords reales si tienes
-                radius: z.nivelRiesgo * 1000,
-                color: 'red',
-                fillOpacity: 0.2
-            }).bindPopup(`<b>Zona:</b> ${z.nombreZona}<br><b>Riesgo:</b> ${z.nivelRiesgo}`)
+            if (!z.coordenadas) return;
+            const coords = z.coordenadas.split(",").map(Number);
+            if (coords.length !== 2 || isNaN(coords[0]) || isNaN(coords[1])) return;
+
+            L.circle(coords, {
+                radius: (z.nivelRiesgo || 1) * 500,
+                color: "red",
+                fillOpacity: 0.15
+            })
+                .bindPopup(`<b>Zona:</b> ${z.nombreZona}<br>Riesgo: ${z.nivelRiesgo}`)
                 .addTo(map);
         });
 
-        // -----------------
-        // 3️⃣ Rutas
+        // 3️⃣ Dibujar rutas: backend envía origen/destino como "lat,lng"
         rutas.forEach(r => {
-            const origenCoords = r.origen.split(',').map(Number);
-            const destinoCoords = r.destino.split(',').map(Number);
+            if (!r.origen || !r.destino) return;
 
-            L.polyline([origenCoords, destinoCoords], {color: 'blue'})
-                .bindPopup(`<b>Distancia:</b> ${r.distancia} km`)
-                .addTo(map);
+            const origenCoords = r.origen.split(",").map(Number);
+            const destinoCoords = r.destino.split(",").map(Number);
+            if (origenCoords.length !== 2 || destinoCoords.length !== 2) return;
+
+            const color = (r.estadoRuta && r.estadoRuta.toLowerCase().includes("dispon")) ? '#3b82f6' : '#dc2626';
+            const dash = (r.estadoRuta && r.estadoRuta.toLowerCase().includes("bloq")) ? '10,10' : null;
+
+            const polyline = L.polyline([origenCoords, destinoCoords], {
+                color: color,
+                weight: 4,
+                dashArray: dash
+            }).addTo(map);
+
+            polyline.bindPopup(`
+            <b>Distancia:</b> ${r.distancia} km<br>
+            <b>Estado:</b> ${r.estadoRuta}
+        `);
+
+            routeLines.push(polyline);
         });
     }
+
+    function llenarPanelUbicaciones(ubicaciones) {
+        const panel = document.getElementById("locationsList");
+        panel.innerHTML = "";
+
+        ubicaciones.forEach((u, idx) => {
+            const item = document.createElement("div");
+            item.classList.add("location-item");
+
+            item.innerHTML = `
+            <div class="location-info">
+                <h4>${u.nombre}</h4>
+                <p><b>Tipo:</b> ${u.tipoUbicacion || '-'}</p>
+                <p><b>Prioridad:</b> ${u.prioridad || '-'}</p>
+                <p><b>Coordenadas:</b> ${u.coordenadas || '-'}</p>
+            </div>
+        `;
+
+            item.onclick = () => {
+                if (!u.coordenadas) return;
+                const coords = u.coordenadas.split(",").map(Number);
+                map.setView(coords, 15);
+            };
+
+            panel.appendChild(item);
+        });
+    }
+    document.getElementById("buscador").addEventListener("input", function () {
+        const texto = this.value.toLowerCase();
+
+        if (texto.trim() === "") {
+            return;
+        }
+
+        // Buscar ubicación por nombre (parcial)
+        const encontrado = markers.find(m =>
+            m.nombre.toLowerCase().includes(texto)
+        );
+
+        if (encontrado) {
+            const coords = encontrado.marker.getLatLng();
+            map.setView([coords.lat, coords.lng], 17);
+
+            // Resaltar marcador temporalmente
+            encontrado.marker.bindPopup(`<b>${encontrado.nombre}</b>`).openPopup();
+        }
+    });
 </script>
 </body>
 </html>

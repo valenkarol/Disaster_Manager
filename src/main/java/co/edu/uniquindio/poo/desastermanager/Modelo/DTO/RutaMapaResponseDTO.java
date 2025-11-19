@@ -3,15 +3,14 @@ package co.edu.uniquindio.poo.desastermanager.Modelo.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.ConditionalOnGraphQlSchema;
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ZonaMapaDTO {
+public class RutaMapaResponseDTO {
     private String id;
-    private String nombreZona;
-    private int nivelRiesgo;
-    private String coordenadas;
+    private String origen;   // "lat,lng"
+    private String destino;  // "lat,lng"
+    private double distancia;
+    private String estadoRuta;
 }

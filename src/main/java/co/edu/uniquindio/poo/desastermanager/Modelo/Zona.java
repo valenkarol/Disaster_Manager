@@ -17,6 +17,7 @@ public class Zona implements Comparable<Zona>{
     private String id;
     private String nombreZona;
     private int nivelRiesgo;
+    private String coordenadas;
 
     @Override
     public int compareTo(Zona otra) {

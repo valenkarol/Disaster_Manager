@@ -16,6 +16,15 @@ public class Ubicacion implements Comparable<Ubicacion>{
     private String coordenadas;
     private TipoUbicacion tipoUbicacion;
 
+    //nuevos atributos
+    private String direccion;     // Ej: "Carrera 14 con Calle 21"
+    private String nombre;        // Ej: "Centro Armenia"
+    private String prioridad;     // HIGH, MEDIUM, LOW
+    private int nivelRiesgo;      // 1–10
+    private int recursos;         // Ej: 120 unidades
+    private int evacuados;        // Ej: 450 personas
+    private int equipos;          // Ej: 3 equipos asignados
+
     @Override
     public int compareTo(Ubicacion otra) {
         if (otra == null) return 1;
