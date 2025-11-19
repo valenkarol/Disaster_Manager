@@ -1,10 +1,9 @@
 package co.edu.uniquindio.poo.desastermanager.Servicios;
 import co.edu.uniquindio.poo.desastermanager.Modelo.*;
+import co.edu.uniquindio.poo.desastermanager.Modelo.DTO.EstadisticaZonaDTO;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ColaPrioridad;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
-import co.edu.uniquindio.poo.desastermanager.Repositorio.EvacuacionRepository;
-import co.edu.uniquindio.poo.desastermanager.Repositorio.ZonaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

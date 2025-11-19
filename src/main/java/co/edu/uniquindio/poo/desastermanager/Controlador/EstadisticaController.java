@@ -1,7 +1,7 @@
 package co.edu.uniquindio.poo.desastermanager.Controlador;
 
 import co.edu.uniquindio.poo.desastermanager.Modelo.Estadistica;
-import co.edu.uniquindio.poo.desastermanager.Modelo.EstadisticaZonaDTO;
+import co.edu.uniquindio.poo.desastermanager.Modelo.DTO.EstadisticaZonaDTO;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.ListaSimpleEnlazada;
 import co.edu.uniquindio.poo.desastermanager.Modelo.EstructurasPropias.NodoLS;
 import co.edu.uniquindio.poo.desastermanager.Servicios.EstadisticaService;
