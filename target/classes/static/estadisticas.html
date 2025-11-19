@@ -503,6 +503,9 @@
                 <div class="option-label">Ubicación General</div>
             </div>
         </div>
+
+        <div id="contenedorZonas" class="zona-lista"></div>
+
     </div>
 
     <div class="stats-grid">
@@ -651,8 +654,6 @@
 
         document.getElementById('zonasActivas').textContent = listaZonas.length;
 
-        const equipos = new Set(listaRecursos.filter(r => r.equipoAsignado).map(r => r.equipoAsignado));
-        document.getElementById('equiposDesplegados').textContent = equipos.size;
     }
 
     function cambiarGrafica(tipo) {
@@ -917,17 +918,112 @@
         document.getElementById('evacuacionesPendientes').innerHTML = evacuacionesHTML || '<li>No hay evacuaciones pendientes</li>';
     }
 
-    function filtrarPorPrioridad(nivel) {
-        alert(`Filtrando por prioridad ${nivel}`);
+    let zonas = []; // almacenamos las zonas aqui
+
+    async function cargarZonas() {
+        try {
+            const response = await fetch("http://localhost:8080/zonas");
+            const data = await response.json();
+            zonas = data.lista || [];
+
+            console.log("Zonas cargadas:", zonas);
+            mostrarZonas(zonas);
+        } catch (e) {
+            console.error("Error cargando zonas:", e);
+        }
     }
 
-    function verTodasUbicaciones() {
-        alert('Mostrando todas las ubicaciones');
+    function mostrarZonas(lista) {
+        const contenedor = document.getElementById("contenedorZonas");
+
+        if (!contenedor) {
+            console.error("❌ ERROR: No existe el contenedor con id 'contenedorZonas'");
+            return;
+        }
+
+        contenedor.innerHTML = "";
+
+        if (!Array.isArray(lista) || lista.length === 0) {
+            contenedor.innerHTML = "<p>No hay zonas para mostrar</p>";
+            return;
+        }
+
+        lista.forEach(z => {
+            const div = document.createElement("div");
+            div.classList.add("zona-card");
+            div.innerHTML = `
+            <h3>${z.nombreZona}</h3>
+            <p>Nivel de Riesgo: ${z.nivelRiesgo}</p>
+        `;
+            contenedor.appendChild(div);
+        });
     }
 
-    // Cargar datos al inicio
-    cargarDatos();
-    setInterval(cargarDatos, 30000);
+    function filtrarPorPrioridad(nivelTexto) {
+        console.log("Filtrar pedido por:", nivelTexto, "Zonas cargadas:", zonas);
+
+        const mapa = { alta: 3, media: 2, baja: 1 };
+        const nivel = mapa[nivelTexto];
+
+        if (!nivel) {
+            alert("Nivel inválido");
+            return;
+        }
+
+        const filtradas = zonas.filter(z => Number(z.nivelRiesgo) === nivel);
+        console.log("Filtradas:", filtradas);
+
+        if (filtradas.length === 0) {
+            alert(`No hay zonas con prioridad ${nivelTexto.toUpperCase()}`);
+            mostrarZonas([]);
+            return;
+        }
+
+        mostrarZonas(filtradas);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarZonas(); // 🔥 IMPORTANTE
+    });
+
 </script>
+
+<script>
+    async function cargarEquipos() {
+        try {
+            const response = await fetch("http://localhost:8080/equipos");
+            if (!response.ok) throw new Error("Error cargando equipos");
+
+            const data = await response.json();
+            const listaEquipos = data.lista || [];
+
+            console.log("Equipos cargados:", listaEquipos);
+
+            document.getElementById("equiposDesplegados").textContent = listaEquipos.length;
+
+        } catch (error) {
+            console.error("❌ Error:", error);
+            document.getElementById("equiposDesplegados").textContent = "0";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarDatos();      // 👈 cargar datos normales
+        cargarEquipos();    // 👈 CARGAR EQUIPOS SOLO AQUÍ
+
+        setInterval(() => {
+            cargarDatos();
+            cargarEquipos();
+        }, 30000);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarZonas(); // 🔥 Muy importante
+    });
+</script>
+
 </body>
 </html>
+
